@@ -26,9 +26,9 @@ proc parseOp(line: string): array[4, int] =
 
 
 let
-    input = input(day=16, year=2018).split("\n\n\n\n")
-    samples = input[0].split("\n\n").map((group) => group.split("\n"))
-    program = input[1].split("\n").map(parseOp)
+    input = input(day=16, year=2018).split("\p\p\p\p")
+    samples = input[0].split("\p\p").map((group) => group.split("\p"))
+    program = input[1].split("\p").map(parseOp)
 
 
 template opgen(leta, letb, operation: untyped): untyped =
