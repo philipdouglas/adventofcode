@@ -31,30 +31,45 @@ let
     program = input[1].split("\n").map(parseOp)
 
 
+template opgen(leta, letb, operation: untyped): untyped =
+    let
+        a {.inject.} = leta
+        b {.inject.} = letb
+    result[command[3]] = operation
+
+
+template oprr(operation: untyped): untyped =
+    opgen(registers[command[1]], registers[command[2]], operation)
+
+
+template opri(operation: untyped): untyped =
+    opgen(registers[command[1]], command[2], operation)
+
+
+template opir(operation: untyped): untyped =
+    opgen(command[1], registers[command[2]], operation)
+
+
 proc execute(opcode: Opcode, command: array[4, int],
              registers: array[4, int]): array[4, int] =
-    let
-        a = command[1]
-        b = command[2]
-        c = command[3]
     result = registers
     case opcode:
-        of addr: result[c] = registers[a] + registers[b]
-        of addi: result[c] = registers[a] + b
-        of mulr: result[c] = registers[a] * registers[b]
-        of muli: result[c] = registers[a] * b
-        of banr: result[c] = registers[a] and registers[b]
-        of bani: result[c] = registers[a] and b
-        of borr: result[c] = registers[a] or registers[b]
-        of bori: result[c] = registers[a] or b
-        of setr: result[c] = registers[a]
-        of seti: result[c] = a
-        of gtir: result[c] = if a > registers[b]: 1 else: 0
-        of gtri: result[c] = if registers[a] > b: 1 else: 0
-        of gtrr: result[c] = if registers[a] > registers[b]: 1 else: 0
-        of eqir: result[c] = if a == registers[b]: 1 else: 0
-        of eqri: result[c] = if registers[a] == b: 1 else: 0
-        of eqrr: result[c] = if registers[a] == registers[b]: 1 else: 0
+        of addr: oprr(a + b)
+        of addi: opri(a + b)
+        of mulr: oprr(a * b)
+        of muli: opri(a * b)
+        of banr: oprr(a and b)
+        of bani: opri(a and b)
+        of borr: oprr(a or b)
+        of bori: opri(a or b)
+        of setr: oprr(a)
+        of seti: opir(a)
+        of gtir: opir(if a > b: 1 else: 0)
+        of gtri: opri(if a > b: 1 else: 0)
+        of gtrr: oprr(if a > b: 1 else: 0)
+        of eqir: opir(if a == b: 1 else: 0)
+        of eqri: opri(if a == b: 1 else: 0)
+        of eqrr: oprr(if a == b: 1 else: 0)
 
 
 proc analyze(sample: seq[string]): tuple[code: int, matches: seq[Opcode]] =
