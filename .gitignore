@@ -1,7 +1,6 @@
 *.sublime-*
 _build
 .elixir_ls
-.vscode
 *.dump
 profile_results.txt
 *.exe

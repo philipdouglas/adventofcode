@@ -1,0 +1,67 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "taskName": "Build nim (debug)",
+            "command": "C:/nim/bin/nim.exe",
+            "args": [
+                "c",
+                "-d:ssl",
+                "-r",
+                "${file}"
+            ],
+            "options": {
+                "cwd": "${workspaceRoot}"
+            },
+            "type": "shell",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "taskName": "Build nim (release)",
+            "command": "C:/nim/bin/nim.exe",
+            "args": [
+                "c",
+                "-d:release",
+                "-d:ssl",
+                "-r",
+                "${file}"
+            ],
+            "options": {
+                "cwd": "${workspaceRoot}"
+            },
+            "type": "shell",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "taskName": "Profile nim",
+            "command": "C:/nim/bin/nim.exe",
+            "args": [
+                "c",
+                "-d:ssl",
+                "--profiler:on",
+                "--stacktrace:on",
+                "-r",
+                "${file}"
+            ],
+            "options": {
+                "cwd": "${workspaceRoot}"
+            },
+            "type": "shell",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        }
+    ]
+}
