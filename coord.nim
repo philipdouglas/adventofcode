@@ -73,23 +73,23 @@ proc `$`*(coord: Coord): string =
     return &"{coord.x},{coord.y}"
 
 
-template left*(c: Coord, n: int = 1): Coord =
+template left*(c: Coord = [0, 0], n: int = 1): Coord =
     c - [n, 0]
 
 
-template right*(c: Coord, n: int = 1): Coord =
+template right*(c: Coord = [0, 0], n: int = 1): Coord =
     c + [n, 0]
 
 
-template up*(c: Coord, n: int = 1): Coord =
+template up*(c: Coord = [0, 0], n: int = 1): Coord =
     c - [0, n]
 
 
-template down*(c: Coord, n: int = 1): Coord =
+template down*(c: Coord = [0, 0], n: int = 1): Coord =
     c + [0, n]
 
 
-template diag*(c: Coord, n: int = 1): Coord =
+template diag*(c: Coord = [0, 0], n: int = 1): Coord =
     c + [n, n]
 
 proc rotateLeft*(c: Coord): Coord =

@@ -1,3 +1,4 @@
+import queues
 import sequtils
 import strformat
 import strscans
@@ -28,20 +29,33 @@ proc parseCoords(input: seq[string]): Table[Coord, Tile] =
             discard line.scanf("y=$i, x=$i..$i", y, xlow, xhigh)
             for x in xlow..xhigh:
                 result[[x, y]] = clay
-    let allcoord = toSeq(result.keys)
+    var allcoord = toSeq(result.keys)
+    allcoord.add([500, 0])
     for coord in (allcoord.min - [1, 0])..(allcoord.max + [1, 0]):
         if coord notin result:
             result[coord] = dry
 
 
-proc findClay(start, direction: Coord, ground: Table[Coord, Tile]): int =
-    var curr = start + direction
+proc findClay(ground: Table[Coord, Tile], start, direction: Coord): int =
+    var
+        curr = start + direction
+        downDist = -1
+    if direction != [0, 1]:
+        downDist = ground.findClay(start, [0, 1])
     while curr in ground:
         if ground[curr] == clay:
             return
+        if downDist != -1 and ground.findClay(curr, [0, 1]) != downDist:
+            break
         result.inc
         curr += direction
     return -1
+
+proc spill(ground: var Table[Coord, Tile], start, direction: Coord): Coord =
+    result = start + direction
+    while ground.getOrDefault(result.down, dry) != dry:
+        ground[result] = dried
+        result += direction
 
 
 proc `$`(tile: Tile): string =
@@ -54,8 +68,7 @@ proc `$`(tile: Tile): string =
 
 
 proc draw(ground: Table[Coord, Tile]): string =
-    let
-        allcoord = toSeq(ground.keys)
+    let allcoord = toSeq(ground.keys)
     for y in allcoord.ymin..allcoord.ymax:
         result.add("\p")
         for x in allcoord.xmin..allcoord.xmax:
@@ -65,12 +78,13 @@ proc draw(ground: Table[Coord, Tile]): string =
 proc followWater(input: seq[string]): int =
     var
         ground = parseCoords(input)
-        moving: seq[Coord] = @[[500, 0]]
+        moving = initQueue[Coord]()
+    moving.enqueue([500, 0])
     while moving.len > 0:
-        let current = moving.pop()
-        if current notin ground:
+        let current = moving.dequeue()
+        if current notin ground or ground[current] in @[clay, wet]:
             continue
-        let below = ground[current.down]
+        let below = ground.getOrDefault(current.down, dry)
         if below == dry:
             moving.add(current.down)
             ground[current] = dried
@@ -78,19 +92,32 @@ proc followWater(input: seq[string]): int =
             ground[current] = dried
         elif below == wet or below == clay:
             let
-                leftClay = findClay(current, [-1, 0], ground)
-                rightClay = findClay(current, [1, 0], ground)
+                leftClay = ground.findClay(current, [-1, 0])
+                rightClay = ground.findClay(current, [1, 0])
             if leftClay > -1 and rightClay > -1:
-                ground[current] = wet
-                if leftClay == 1:
-                    moving.add(current.up)
-                if rightClay == 1:
-                    moving.add(current.up)
+                for i in 0..leftClay:
+                    ground[current - [i, 0]] = wet
+                for i in 0..rightClay:
+                    ground[current + [i, 0]] = wet
+            elif leftClay > -1:
+                for i in 0..leftClay:
+                    ground[current - [i, 0]] = dried
+                moving.add(ground.spill(current, right))
+            elif rightClay > -1:
+                for i in 0..rightClay:
+                    ground[current + [i, 0]] = dried
+                moving.add(ground.spill(current, left))
             else:
-                ground[current] = dried
-            moving.add(current.left)
-            moving.add(current.right)
-    echo ground.draw
+                moving.add(ground.spill(current, left))
+                moving.add(ground.spill(current, right))
+
+            moving.add(current.up)
+        # echo moving
+        pause(ground.draw)
+    # echo ground.draw
+    # -1 to ignore the source
+    return toSeq(ground.values).filterIt(it in @[wet, dried]).len - 1
+
 
 let testInput = @[
     "x=495, y=2..7",
@@ -105,3 +132,5 @@ let testInput = @[
 check:
     testInput.followWater() == 57
 
+# echo input.parseCoords.draw
+# echo &"Part 1: {input.followWater()}"
