@@ -69,7 +69,7 @@ proc draw(ground: Table[Coord, Tile], ylim: int = -1): string =
             result.add($ground.getOrDefault([x, y], dry))
 
 
-proc followWater(input: seq[string]): int =
+proc followWater(input: seq[string]): tuple[part1: int, part2: int] =
     var ground = parseCoords(input)
     let
         allcoords = toSeq(ground.keys)
@@ -116,7 +116,8 @@ proc followWater(input: seq[string]): int =
         # echo moving
         # pause(ground.draw(current.y))
     # echo ground.draw
-    return toSeq(ground.values).filterIt(it in @[wet, dried]).len
+    result.part1 = toSeq(ground.values).filterIt(it in @[wet, dried]).len
+    result.part2 = toSeq(ground.values).filterIt(it == wet).len
 
 
 let testInput = @[
@@ -130,7 +131,9 @@ let testInput = @[
     "y=13, x=498..504",
 ]
 check:
-    testInput.followWater() == 57
+    testInput.followWater() == (57, 29)
 
 # echo input.parseCoords.draw
-echo &"Part 1: {input.followWater()}"
+let answer = input.followWater()
+echo &"Part 1: {answer.part1}"
+echo &"Part 2: {answer.part2}"
