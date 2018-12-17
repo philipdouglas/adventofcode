@@ -3,7 +3,6 @@ import sequtils
 import strformat
 import strscans
 import strutils
-import sugar
 import tables
 from unittest import check
 
@@ -14,9 +13,14 @@ let input = input(day=17, year=2018).split("\p")
 
 type
     Tile = enum clay, wet, dried, dry
+    Ground = Table[Coord, Tile]
 
 
-proc parseCoords(input: seq[string]): Table[Coord, Tile] =
+template `[]`(ground: Ground, pos: Coord): Tile =
+    ground.getOrDefault(pos, dry)
+
+
+proc parseCoords(input: seq[string]): Ground =
     result = initTable[Coord, Tile]()
     for line in input:
         if line[0] == 'x':
@@ -31,23 +35,29 @@ proc parseCoords(input: seq[string]): Table[Coord, Tile] =
                 result[[x, y]] = clay
 
 
-proc findClay(ground: Table[Coord, Tile], start, direction: Coord): int =
+proc findClay(ground: Ground, start, direction: Coord): int =
     var
         curr = start + direction
     while true:
-        if ground.getOrDefault(curr, dry) == clay:
+        if ground[curr] == clay:
             return
-        if direction != [0, 1] and ground.getOrDefault(curr.down, dry) notin @[clay, wet]:
+        if direction != [0, 1] and ground[curr.down] notin @[clay, wet]:
             break
         result.inc
         curr += direction
     return -1
 
-proc spill(ground: var Table[Coord, Tile], start, direction: Coord): Coord =
-    result = start + direction
-    while ground.getOrDefault(result.down, dry) in @[clay, wet]:
+
+proc spill(ground: var Ground, start, direction: Coord): Coord =
+    result = start
+    while ground[result] != clay and ground[result.down] in @[clay, wet]:
         ground[result] = dried
         result += direction
+
+
+proc fill(ground: var Ground, start: Coord, left, right: int, tile: Tile) =
+    for i in -left..right:
+        ground[start + [i, 0]] = tile
 
 
 proc `$`(tile: Tile): string =
@@ -59,7 +69,7 @@ proc `$`(tile: Tile): string =
         else: return "!"
 
 
-proc draw(ground: Table[Coord, Tile], ylim: int = -1): string =
+proc draw(ground: Ground, ylim: int = -1): string =
     let allcoord = toSeq(ground.keys)
     for y in allcoord.ymin..allcoord.ymax:
         if ylim > -1 and abs(y - ylim) > 20:
@@ -69,53 +79,33 @@ proc draw(ground: Table[Coord, Tile], ylim: int = -1): string =
             result.add($ground.getOrDefault([x, y], dry))
 
 
-proc followWater(input: seq[string]): tuple[part1: int, part2: int] =
+proc followWater(input: seq[string], debug: bool = false): tuple[part1: int, part2: int] =
     var ground = parseCoords(input)
     let
         allcoords = toSeq(ground.keys)
         ylim = allcoords.ymax
     var moving: seq[Coord] = @[[500, allcoords.ymin]]
     while moving.len > 0:
-        moving.sort(cmp)
+        if debug: moving.sort(cmp)  # Makes it easier to follow
         let current = moving.pop()
         if current.y > ylim:
             continue
-        if ground.getOrDefault(current, dry) in @[clay, wet]:
+        if ground[current] in @[clay, wet]:
             continue
-        let below = ground.getOrDefault(current.down, dry)
-        if below == dry:
+        if ground[current.down] == dry:
             moving.add(current.down)
             ground[current] = dried
-        elif below == dried:
-            ground[current] = dried
-        elif below == wet or below == clay:
+        elif ground[current.down] in @[wet, clay]:
             let
-                leftClay = ground.findClay(current, [-1, 0])
-                rightClay = ground.findClay(current, [1, 0])
+                leftClay = ground.findClay(current, left)
+                rightClay = ground.findClay(current, right)
             if leftClay > -1 and rightClay > -1:
-                ground[current] = wet
-                for i in 0..leftClay:
-                    ground[current - [i, 0]] = wet
-                for i in 0..rightClay:
-                    ground[current + [i, 0]] = wet
+                ground.fill(current, leftClay, rightClay, wet)
                 moving.add(current.up)
-            elif leftClay > -1:
-                ground[current] = dried
-                for i in 0..leftClay:
-                    ground[current - [i, 0]] = dried
-                moving.add(ground.spill(current, right))
-            elif rightClay > -1:
-                ground[current] = dried
-                for i in 0..rightClay:
-                    ground[current + [i, 0]] = dried
-                moving.add(ground.spill(current, left))
             else:
-                ground[current] = dried
                 moving.add(ground.spill(current, left))
                 moving.add(ground.spill(current, right))
-        # echo moving
-        # pause(ground.draw(current.y))
-    # echo ground.draw
+        if debug: pause(ground.draw(current.y))
     result.part1 = toSeq(ground.values).filterIt(it in @[wet, dried]).len
     result.part2 = toSeq(ground.values).filterIt(it == wet).len
 
@@ -133,7 +123,6 @@ let testInput = @[
 check:
     testInput.followWater() == (57, 29)
 
-# echo input.parseCoords.draw
-let answer = input.followWater()
+let answer = input.followWater(debug=false)
 echo &"Part 1: {answer.part1}"
 echo &"Part 2: {answer.part2}"
