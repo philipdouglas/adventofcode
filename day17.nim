@@ -1,4 +1,4 @@
-import queues
+import algorithm
 import sequtils
 import strformat
 import strscans
@@ -29,23 +29,15 @@ proc parseCoords(input: seq[string]): Table[Coord, Tile] =
             discard line.scanf("y=$i, x=$i..$i", y, xlow, xhigh)
             for x in xlow..xhigh:
                 result[[x, y]] = clay
-    var allcoord = toSeq(result.keys)
-    allcoord.add([500, 0])
-    for coord in (allcoord.min - [1, 0])..(allcoord.max + [1, 0]):
-        if coord notin result:
-            result[coord] = dry
 
 
 proc findClay(ground: Table[Coord, Tile], start, direction: Coord): int =
     var
         curr = start + direction
-        downDist = -1
-    if direction != [0, 1]:
-        downDist = ground.findClay(start, [0, 1])
-    while curr in ground:
-        if ground[curr] == clay:
+    while true:
+        if ground.getOrDefault(curr, dry) == clay:
             return
-        if downDist != -1 and ground.findClay(curr, [0, 1]) != downDist:
+        if direction != [0, 1] and ground.getOrDefault(curr.down, dry) notin @[clay, wet]:
             break
         result.inc
         curr += direction
@@ -53,7 +45,7 @@ proc findClay(ground: Table[Coord, Tile], start, direction: Coord): int =
 
 proc spill(ground: var Table[Coord, Tile], start, direction: Coord): Coord =
     result = start + direction
-    while ground.getOrDefault(result.down, dry) != dry:
+    while ground.getOrDefault(result.down, dry) in @[clay, wet]:
         ground[result] = dried
         result += direction
 
@@ -62,27 +54,33 @@ proc `$`(tile: Tile): string =
     case tile:
         of clay: return "#"
         of dried: return "|"
-        of dry: return "."
+        of dry: return " "
         of wet: return "~"
         else: return "!"
 
 
-proc draw(ground: Table[Coord, Tile]): string =
+proc draw(ground: Table[Coord, Tile], ylim: int = -1): string =
     let allcoord = toSeq(ground.keys)
     for y in allcoord.ymin..allcoord.ymax:
+        if ylim > -1 and abs(y - ylim) > 20:
+            continue
         result.add("\p")
         for x in allcoord.xmin..allcoord.xmax:
-            result.add($ground[[x, y]])
+            result.add($ground.getOrDefault([x, y], dry))
 
 
 proc followWater(input: seq[string]): int =
-    var
-        ground = parseCoords(input)
-        moving = initQueue[Coord]()
-    moving.enqueue([500, 0])
+    var ground = parseCoords(input)
+    let
+        allcoords = toSeq(ground.keys)
+        ylim = allcoords.ymax
+    var moving: seq[Coord] = @[[500, allcoords.ymin]]
     while moving.len > 0:
-        let current = moving.dequeue()
-        if current notin ground or ground[current] in @[clay, wet]:
+        moving.sort(cmp)
+        let current = moving.pop()
+        if current.y > ylim:
+            continue
+        if ground.getOrDefault(current, dry) in @[clay, wet]:
             continue
         let below = ground.getOrDefault(current.down, dry)
         if below == dry:
@@ -95,28 +93,30 @@ proc followWater(input: seq[string]): int =
                 leftClay = ground.findClay(current, [-1, 0])
                 rightClay = ground.findClay(current, [1, 0])
             if leftClay > -1 and rightClay > -1:
+                ground[current] = wet
                 for i in 0..leftClay:
                     ground[current - [i, 0]] = wet
                 for i in 0..rightClay:
                     ground[current + [i, 0]] = wet
+                moving.add(current.up)
             elif leftClay > -1:
+                ground[current] = dried
                 for i in 0..leftClay:
                     ground[current - [i, 0]] = dried
                 moving.add(ground.spill(current, right))
             elif rightClay > -1:
+                ground[current] = dried
                 for i in 0..rightClay:
                     ground[current + [i, 0]] = dried
                 moving.add(ground.spill(current, left))
             else:
+                ground[current] = dried
                 moving.add(ground.spill(current, left))
                 moving.add(ground.spill(current, right))
-
-            moving.add(current.up)
         # echo moving
-        pause(ground.draw)
+        # pause(ground.draw(current.y))
     # echo ground.draw
-    # -1 to ignore the source
-    return toSeq(ground.values).filterIt(it in @[wet, dried]).len - 1
+    return toSeq(ground.values).filterIt(it in @[wet, dried]).len
 
 
 let testInput = @[
@@ -133,4 +133,4 @@ check:
     testInput.followWater() == 57
 
 # echo input.parseCoords.draw
-# echo &"Part 1: {input.followWater()}"
+echo &"Part 1: {input.followWater()}"
