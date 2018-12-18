@@ -1,8 +1,11 @@
+import math
+import hashes
 import sequtils
 import strformat
 import strutils
 import tables
 from unittest import check
+import nimprof
 
 import aoc
 import coord
@@ -23,6 +26,10 @@ proc `$`(tile: Tile): string =
         of lumberyard: return "#"
         of open: return " "
         else: return "!"
+
+
+proc hash(map: Map): Hash =
+    return toSeq(map.pairs).hash
 
 
 proc draw(map: Map, ylim: int = -1): string =
@@ -54,7 +61,7 @@ iterator adjacent(pos: Coord): Coord =
 proc grow(map: seq[string], mins: int, debug: bool = false): int =
     var
         map = parseMap(map)
-        seen = @[map]
+        seen = initTable[Hash, int]()
         elapsed, period, index: int
     let
         allcoords = toSeq(map.keys)
@@ -63,7 +70,7 @@ proc grow(map: seq[string], mins: int, debug: bool = false): int =
     if debug: echo map.draw()
     while elapsed < mins:
         elapsed.inc
-        var newMap = initTable[Coord, Tile]()
+        var newMap = initTable[Coord, Tile](map.len.nextPowerOfTwo)
         for pos in start..finish:
             let surrounds = toSeq(pos.adjacent).mapIt(map[it]).toCountTable()
             case map[pos]:
@@ -81,11 +88,11 @@ proc grow(map: seq[string], mins: int, debug: bool = false): int =
         map = newMap
         if debug: pause(map.draw)
 
-        index = seen.find(map)
-        if index > -1:
-            map = seen[index + ((mins - elapsed) mod (elapsed - index))]
-            break
-        seen.add(map)
+        let mapHash = map.hash
+        if mapHash in seen:
+            elapsed = mins - ((mins - elapsed) mod (elapsed - seen[mapHash]))
+            seen.clear()
+        seen[mapHash] = elapsed
 
     let counts = toSeq(map.values).toCountTable()
     return counts[trees] * counts[lumberyard]
