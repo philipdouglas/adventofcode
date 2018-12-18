@@ -64,6 +64,9 @@ template ymin*(coords: seq[Coord]): int =
 template min*(coords: seq[Coord]): Coord =
     [xmin(coords), ymin(coords)]
 
+proc minmax*(coords: seq[Coord]): tuple[xmin, xmax, ymin, ymax: int] =
+    return (coords.xmin, coords.xmax, coords.ymin, coords.ymax)
+
 proc parseCoord*(input: string): Coord =
     var x, y: int
     discard input.scanf("$i, $i", x, y)

@@ -1,8 +1,6 @@
-import hashes
 import sequtils
 import strformat
 import strutils
-import sugar
 import tables
 from unittest import check
 
@@ -28,12 +26,12 @@ proc `$`(tile: Tile): string =
 
 
 proc draw(map: Map, ylim: int = -1): string =
-    let allcoord = toSeq(map.keys)
-    for y in allcoord.ymin..allcoord.ymax:
+    let (xmin, xmax, ymin, ymax) = toSeq(map.keys).minmax
+    for y in ymin..ymax:
         if ylim > -1 and abs(y - ylim) > 20:
             continue
         result.add("\p")
-        for x in allcoord.xmin..allcoord.xmax:
+        for x in xmin..xmax:
             result.add($map[[x, y]])
 
 
@@ -56,11 +54,8 @@ iterator adjacent(pos: Coord): Coord =
 proc grow(map: seq[string], mins: int, debug: bool = false): int =
     var
         map = parseMap(map)
-        # record = initTable[int, int]()
         seen = @[map]
         elapsed, period, index: int
-    # let startcounts = toSeq(map.values).toCountTable()
-    # record[startcounts[trees] * startcounts[lumberyard]] = 0
     let
         allcoords = toSeq(map.keys)
         start = allcoords.min
@@ -88,31 +83,9 @@ proc grow(map: seq[string], mins: int, debug: bool = false): int =
 
         index = seen.find(map)
         if index > -1:
-            let final = index + ((mins - elapsed) mod (elapsed - index))
-            echo final
-            echo seen.len
-            map = seen[final]
+            map = seen[index + ((mins - elapsed) mod (elapsed - index))]
             break
-        else: seen.add(map)
-        # if elapsed mod 100 == 0:
-        #     let counts = toSeq(map.values).toCountTable()
-        #     echo counts
-            # pause(map.draw)
-
-        # let
-        #     counts = toSeq(map.values).toCountTable()
-        #     value = counts[trees] * counts[lumberyard]
-        # if value in record:
-        #     # echo &"{record[value]} {elapsed}"
-        #     let finish = record[value] + ((mins - record[value]) mod (elapsed - record[value]))
-        #     # echo finish
-
-        #     for key in record.keys:
-        #         if record[key] == finish:
-        #             return key
-        #     # elapsed = mins - (record[value] + ((mins - record[value]) mod (elapsed - record[value])))
-        #     # record = initTable[int, int]()
-        # record[value] = elapsed
+        seen.add(map)
 
     let counts = toSeq(map.values).toCountTable()
     return counts[trees] * counts[lumberyard]
