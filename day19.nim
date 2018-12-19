@@ -69,17 +69,22 @@ proc execute(command: Inst, registers: array[6, int]): array[6, int] =
         of eqrr: oprr(if a == b: 1 else: 0)
 
 
-proc run(program: seq[string], ip: int, debug: bool = false): int =
+proc run(program: seq[string], ip: int, init0: int = 0, debug: bool = false): int =
     var
         registers: array[6, int]
         pc: int
         program = parseInstructions(program)
+    registers[0] = init0
     while pc >= 0 and pc <= program.high:
         registers[ip] = pc
         let inst = program[pc]
-        if debug: pause(&"pc={pc} {registers} {inst}")
+        # if debug: pause(&"pc={pc} {registers} {inst}")
         registers = execute(inst, registers)
         if debug: pause(&"Result: {registers}")
+        if registers[2] > 10000000 and registers[5] < 100000:
+            registers[5] = registers[2] - 3
+        if registers[2] > 10000000 and registers[5] > registers[2] and registers[1] > 4:
+            registers[1] = registers[2] - 3
         pc = registers[ip] + 1
     return registers[0]
 
@@ -95,4 +100,5 @@ check:
         "seti 9 0 5",
     ].run(0) == 6
 
-echo &"Part 1: {inputProg.run(inputIp, false)}"
+echo &"Part 1: {inputProg.run(inputIp, debug=false)}"
+echo &"Part 2: {inputProg.run(inputIp, 1, debug=true)}"
