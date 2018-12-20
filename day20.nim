@@ -13,7 +13,7 @@ import coord
 let input = input(day=20, year=2018)
 
 
-proc furthest(regex: string, debug: bool = false): int =
+proc furthest(regex: string, debug: bool = false): tuple[part1: int, part2: int] =
     # var
     #     branches: seq[seq[seq[Coord]]] = @[@[@[[0, 0]]]]
     # for cha in regex:
@@ -100,16 +100,19 @@ proc furthest(regex: string, debug: bool = false): int =
     #             depths[child] = depth + 1
     #     closed.incl(curr)
     # return deepest
-    return toSeq(depths.values).max
+    result.part1 = toSeq(depths.values).max
+    result.part2 = toSeq(depths.values).filterIt(it >= 1000).len
 
 
 
 check:
-    "^WNE$".furthest() == 3
-    "^S(E|W|)$".furthest() == 2
-    "^ENWWW(NEEE|SSE(EE|N))$".furthest() == 10
-    "^ENNWSWW(NEWS|)SSSEEN(WNSE|)EE(SWEN|)NNN$".furthest() == 18
-    "^ESSWWN(E|NNENN(EESS(WNSE|)SSS|WWWSSSSE(SW|NNNE)))$".furthest() == 23
-    "^WSSEESWWWNW(S|NENNEEEENN(ESSSSW(NWSW|SSEN)|WSWWN(E|WWS(E|SS))))$".furthest() == 31
+    "^WNE$".furthest() == (3, 0)
+    "^S(E|W|)$".furthest() == (2, 0)
+    "^ENWWW(NEEE|SSE(EE|N))$".furthest() == (10, 0)
+    "^ENNWSWW(NEWS|)SSSEEN(WNSE|)EE(SWEN|)NNN$".furthest() == (18, 0)
+    "^ESSWWN(E|NNENN(EESS(WNSE|)SSS|WWWSSSSE(SW|NNNE)))$".furthest() == (23, 0)
+    "^WSSEESWWWNW(S|NENNEEEENN(ESSSSW(NWSW|SSEN)|WSWWN(E|WWS(E|SS))))$".furthest() == (31, 0)
 
-echo &"Part 1: {input.furthest()}"
+let (p1, p2) = input.furthest()
+echo &"Part 1: {p1}"
+echo &"Part 2: {p2}"
