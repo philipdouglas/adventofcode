@@ -1,9 +1,6 @@
-import queues
 import sequtils
-import sets
 import strformat
 import strutils
-import sugar
 import tables
 from unittest import check
 
