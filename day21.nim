@@ -3,7 +3,6 @@ import strutils
 import sugar
 import intsets
 from unittest import check
-import nimprof
 
 import aoc
 from day19 import execute, parseInstructions, Inst
@@ -14,14 +13,6 @@ let
     inputProg = input[1..^1]
 
 
-proc step(program: seq[Inst], ip: int, regs: var array[6, int], debug: bool=false) =
-    let inst = program[regs[ip]]
-    if debug: pause(&"pc={regs[ip]} {regs} {inst}")
-    regs = execute(inst, regs)
-    if debug: pause(&"Result: {regs}")
-    regs[ip] += 1
-
-
 proc analyse(program: seq[string], ip: int, debug: bool=false): tuple[p1: int, p2: int] =
     var
         program = parseInstructions(program)
@@ -29,7 +20,10 @@ proc analyse(program: seq[string], ip: int, debug: bool=false): tuple[p1: int, p
         zeroes = initIntSet()
         prevZero: int
     while regs[ip] >= 0 and regs[ip] <= program.high:
-        step(program, ip, regs, debug)
+        if debug: pause(&"pc={regs[ip]} {regs} {program[regs[ip]]}")
+        regs = execute(program[regs[ip]], regs)
+        if debug: pause(&"Result: {regs}")
+        regs[ip] += 1
         if regs[ip] == 28:
             if result.p1 == 0:
                 result.p1 = regs[5]
