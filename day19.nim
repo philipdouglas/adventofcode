@@ -17,12 +17,12 @@ type
     Opcode = enum
         addr, addi, mulr, muli, banr, bani, borr, bori,
         setr, seti, gtir, gtri, gtrr, eqir, eqri, eqrr
-    Inst = tuple[op: Opcode, a, b, c: int]
+    Inst* = tuple[op: Opcode, a, b, c: int]
 
 let opcodeMap = toSeq(Opcode.low..Opcode.high).mapIt(($it, it)).toTable()
 
 
-proc parseInstructions(program: seq[string]): seq[Inst] =
+proc parseInstructions*(program: seq[string]): seq[Inst] =
     for line in program:
         var a, b, c: int
         discard line[4..^1].scanf(" $i $i $i", a, b, c)
@@ -48,7 +48,7 @@ template opir(operation: untyped): untyped =
     opgen(command.a, registers[command.b], operation)
 
 
-proc execute(command: Inst, registers: array[6, int]): array[6, int] =
+proc execute*(command: Inst, registers: array[6, int]): array[6, int] =
     result = registers
     case command.op:
         of addr: oprr(a + b)
@@ -59,7 +59,7 @@ proc execute(command: Inst, registers: array[6, int]): array[6, int] =
         of bani: opri(a and b)
         of borr: oprr(a or b)
         of bori: opri(a or b)
-        of setr: oprr(a)
+        of setr: result[command.c] = registers[command.a]
         of seti: result[command.c] = command.a
         of gtir: opir(if a > b: 1 else: 0)
         of gtri: opri(if a > b: 1 else: 0)
@@ -104,5 +104,6 @@ check:
         "seti 9 0 5",
     ].run(0) == 6
 
-echo &"Part 1: {inputProg.run(inputIp, debug=false)}"
-echo &"Part 2: {inputProg.run(inputIp, 1, debug=false)}"
+when isMainModule:
+    echo &"Part 1: {inputProg.run(inputIp, debug=false)}"
+    echo &"Part 2: {inputProg.run(inputIp, 1, debug=false)}"
