@@ -1,6 +1,7 @@
 import strformat
 import strutils
 import sugar
+import intsets
 from unittest import check
 
 import aoc
@@ -28,25 +29,27 @@ proc run(program: seq[string], ip: int, init0: int=0, debug: bool=false): int =
     return registers[5]
 
 
+proc part2(program: seq[string], ip: int, init0: int=0, debug: bool=false): int =
+    var
+        program = parseInstructions(program)
+        registers: array[6, int]
+        pc: int
+        zeroes = initIntSet()
+        prevZero: int
+    registers[0] = init0
+    while pc >= 0 and pc <= program.high:
+        registers[ip] = pc
+        let inst = program[pc]
+        if debug: pause(&"pc={pc} {registers} {inst}")
+        registers = execute(inst, registers)
+        if debug: pause(&"Result: {registers}")
+        pc = registers[ip] + 1
+        if pc == 28:
+            if registers[5] in zeroes:
+                return prevZero
+            zeroes.incl(registers[5])
+            prevZero = registers[5]
+
+
 echo &"Part 1: {inputProg.run(inputIp, debug=false)}"
-
-# var a, b, d, e, f: int
-# while f == 0:
-#     b = f or 65536
-#     f = 10678677
-#     e = b and 255
-#     f = f + e
-#     f = f and 16777215
-#     f = f * 65899
-#     f = f and 16777215
-#     e = int(256 > b)
-#     while e == 0:
-#         e = 0
-#         d = e + 1
-#         d = d * 256
-#         d = int(d > b)
-
-# r = [1, 65536, 18, 0, 0, 10587719]
-# while True:
-
-#     if r[1] > 256:
+echo &"Part 2: {inputProg.part2(inputIp, debug=false)}"
