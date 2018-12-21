@@ -3,6 +3,7 @@ import strutils
 import sugar
 import intsets
 from unittest import check
+import nimprof
 
 import aoc
 from day19 import execute, parseInstructions, Inst
@@ -13,43 +14,32 @@ let
     inputProg = input[1..^1]
 
 
-proc run(program: seq[string], ip: int, init0: int=0, debug: bool=false): int =
-    var
-        program = parseInstructions(program)
-        registers: array[6, int]
-        pc: int
-    registers[0] = init0
-    while pc >= 0 and pc <= program.high and pc != 28:
-        registers[ip] = pc
-        let inst = program[pc]
-        if debug: pause(&"pc={pc} {registers} {inst}")
-        registers = execute(inst, registers)
-        if debug: pause(&"Result: {registers}")
-        pc = registers[ip] + 1
-    return registers[5]
+proc step(program: seq[Inst], ip: int, regs: var array[6, int], debug: bool=false) =
+    let inst = program[regs[ip]]
+    if debug: pause(&"pc={regs[ip]} {regs} {inst}")
+    regs = execute(inst, regs)
+    if debug: pause(&"Result: {regs}")
+    regs[ip] += 1
 
 
-proc part2(program: seq[string], ip: int, init0: int=0, debug: bool=false): int =
+proc analyse(program: seq[string], ip: int, debug: bool=false): tuple[p1: int, p2: int] =
     var
         program = parseInstructions(program)
-        registers: array[6, int]
-        pc: int
+        regs: array[6, int]
         zeroes = initIntSet()
         prevZero: int
-    registers[0] = init0
-    while pc >= 0 and pc <= program.high:
-        registers[ip] = pc
-        let inst = program[pc]
-        if debug: pause(&"pc={pc} {registers} {inst}")
-        registers = execute(inst, registers)
-        if debug: pause(&"Result: {registers}")
-        pc = registers[ip] + 1
-        if pc == 28:
-            if registers[5] in zeroes:
-                return prevZero
-            zeroes.incl(registers[5])
-            prevZero = registers[5]
+    while regs[ip] >= 0 and regs[ip] <= program.high:
+        step(program, ip, regs, debug)
+        if regs[ip] == 28:
+            if result.p1 == 0:
+                result.p1 = regs[5]
+            if regs[5] in zeroes:
+                result.p2 = prevZero
+                break
+            zeroes.incl(regs[5])
+            prevZero = regs[5]
 
 
-echo &"Part 1: {inputProg.run(inputIp, debug=false)}"
-echo &"Part 2: {inputProg.part2(inputIp, debug=false)}"
+let (p1, p2) = inputProg.analyse(inputIp, debug=false)
+echo &"Part 1: {p1}"
+echo &"Part 2: {p2}"
