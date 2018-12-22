@@ -108,6 +108,10 @@ proc cmp*(a, b: Coord): int =
         result = cmp(a.x, b.x)
 
 
+template `[]`*[T](multiarray: seq[seq[T]], pos: Coord): T =
+    multiarray[pos.y][pos.x]
+
+
 when isMainModule:
     import unittest
 
