@@ -2,7 +2,6 @@ import algorithm
 import math
 import queues
 import sequtils
-import sets
 import strformat
 import strutils
 import sugar
@@ -38,7 +37,7 @@ proc `$`(tool: Tool): string =
 
 proc generate(target: Coord, depth: int, debug: bool = false): seq[seq[Area]] =
     var levelMap: seq[seq[int]]
-    let extended = target + [1000, 100] # [target.y div 3, 15]
+    let extended = target + [target.y div 5, 5]
     for y in 0..extended.y:
         levelMap.add(@[])
         for x in 0..extended.x:
@@ -82,21 +81,15 @@ iterator options(map: seq[seq[Area]], curr: PosTool): PosTool =
 
 proc rescue(map: seq[seq[Area]], target: Coord, debug: bool = false): int =
     var
-        closed = initSet[PosTool]()
         open = initQueue[PosTool]()
         cameFrom = initTable[PosTool, PosTool]()
         gScore = initTable[PosTool, int]()
-        # fScore = initTable[Coord, int]()
         target: PosTool = (target, torch)
         shortestRoute = -1
     open.enqueue(([0, 0], torch))
     gScore[([0, 0], torch)] = 0
-    # fscore[target] = manhattenDist(target)
 
     while open.len > 0:
-        # let openSorted = toSeq(open.items).sortedByIt(fscore.getOrDefault(it.pos, int.high))
-        # let openSorted = toSeq(open.items).sorted(proc (x, y: PosTool): int =
-        #     result = cmp(fScore[x.pos], fScore[y.pos]))
         let curr = open.dequeue()
 
         if curr.pos == target.pos:
@@ -104,12 +97,7 @@ proc rescue(map: seq[seq[Area]], target: Coord, debug: bool = false): int =
                 shortestRoute = gScore[curr]
             continue
 
-        closed.incl(curr)
-
         for option in options(map, curr):
-            # if option in closed:
-            #     continue
-
             var tentativeGScore = gScore[curr] + 1
             if option.tool != curr.tool:
                 tentativeGScore += 7
@@ -123,21 +111,17 @@ proc rescue(map: seq[seq[Area]], target: Coord, debug: bool = false): int =
                 continue
             open.enqueue(option)
 
-            cameFrom[option] = curr
+            if debug: cameFrom[option] = curr
             gScore[option] = tentativeGScore
-            # fscore[option.pos] = tentativeGScore + manhattenDist(option.pos, target)
 
     if debug:
         var
             rebuild = target
-            # route: seq[PosTool]
             route = initTable[Coord, Tool]()
         route[[0, 0]] = torch
         while rebuild.pos != [0, 0]:
-            # route.add(rebuild)
             route[rebuild.pos] = rebuild.tool
             rebuild = cameFrom[rebuild]
-        # route.add(rebuild)
         var debugOut: string
         for y in 0..map.high:
             if y > 0: debugOut.add("\n")
@@ -147,7 +131,6 @@ proc rescue(map: seq[seq[Area]], target: Coord, debug: bool = false): int =
                 else:
                     debugOut.add($map[[x, y]])
         echo debugOut
-        # echo route.reversed().mapIt(&"{it.pos} {it.tool} {gScore[it]} {map[it.pos]}")
     return shortestRoute
 
 
