@@ -1,8 +1,12 @@
+import algorithm
 import math
+import queues
 import sequtils
+import sets
 import strformat
 import strutils
 import sugar
+import tables
 from unittest import check
 
 import aoc
@@ -13,7 +17,10 @@ const
     TARGET = [8, 701]
 
 
-type Area = enum rocky, wet, narrow
+type
+    Area = enum rocky, wet, narrow
+    Tool = enum none, torch, gear
+    PosTool = tuple[pos: Coord, tool: Tool]
 
 
 proc `$`(area: Area): string =
@@ -22,12 +29,19 @@ proc `$`(area: Area): string =
         of wet: return "="
         of narrow: return "|"
 
+proc `$`(tool: Tool): string =
+    case tool:
+        of none: return "N"
+        of torch: return "T"
+        of gear: return "G"
 
-proc riskLevel(target: Coord, depth: int, debug: bool = false): int =
+
+proc generate(target: Coord, depth: int, debug: bool = false): seq[seq[Area]] =
     var levelMap: seq[seq[int]]
-    for y in 0..target.y:
+    let extended = target + [1000, 100] # [target.y div 3, 15]
+    for y in 0..extended.y:
         levelMap.add(@[])
-        for x in 0..target.x:
+        for x in 0..extended.x:
             let curr = [x, y]
             if debug: echo [x, y]
             var geologicIndex = 0
@@ -42,18 +56,110 @@ proc riskLevel(target: Coord, depth: int, debug: bool = false): int =
 
             let erosionLevel = (geologicIndex + depth) mod 20183
             levelMap[^1].add(erosionLevel)
-    let map = levelMap.mapIt(it.mapIt(Area(it mod 3)))
-
-    if debug: echo map.mapIt(it.join("")).join("\n")
-
-    return map.concat().mapIt(it.int).sum()
+    result = levelMap.mapIt(it.mapIt(Area(it mod 3)))
+    if debug: echo result.mapIt(it.join("")).join("\n")
 
 
+
+proc riskLevel(map: seq[seq[Area]], target: Coord, debug: bool = false): int =
+    let rectangle = map[0..target.y].map((row: seq[Area]) => row[0..target.x])
+    return rectangle.concat().mapIt(it.int).sum()
+
+
+iterator options(map: seq[seq[Area]], curr: PosTool): PosTool =
+    for pos in [curr.pos.up, curr.pos.left, curr.pos.right, curr.pos.down]:
+        if pos.x < 0 or pos.y < 0 or pos.y > map.high or pos.x > map[0].high:
+            continue
+        for tool in Tool.low..Tool.high:
+            if tool == none and (map[pos] == rocky or map[curr.pos] == rocky):
+                continue
+            elif tool == torch and (map[pos] == wet or map[curr.pos] == wet):
+                continue
+            elif tool == gear and (map[pos] == narrow or map[curr.pos] == narrow):
+                continue
+            yield (pos, tool)
+
+
+proc rescue(map: seq[seq[Area]], target: Coord, debug: bool = false): int =
+    var
+        closed = initSet[PosTool]()
+        open = initQueue[PosTool]()
+        cameFrom = initTable[PosTool, PosTool]()
+        gScore = initTable[PosTool, int]()
+        # fScore = initTable[Coord, int]()
+        target: PosTool = (target, torch)
+        shortestRoute = -1
+    open.enqueue(([0, 0], torch))
+    gScore[([0, 0], torch)] = 0
+    # fscore[target] = manhattenDist(target)
+
+    while open.len > 0:
+        # let openSorted = toSeq(open.items).sortedByIt(fscore.getOrDefault(it.pos, int.high))
+        # let openSorted = toSeq(open.items).sorted(proc (x, y: PosTool): int =
+        #     result = cmp(fScore[x.pos], fScore[y.pos]))
+        let curr = open.dequeue()
+
+        if curr.pos == target.pos:
+            if shortestRoute == -1 or gScore[curr] < shortestRoute:
+                shortestRoute = gScore[curr]
+            continue
+
+        closed.incl(curr)
+
+        for option in options(map, curr):
+            # if option in closed:
+            #     continue
+
+            var tentativeGScore = gScore[curr] + 1
+            if option.tool != curr.tool:
+                tentativeGScore += 7
+            if option.pos == target.pos and option.tool != torch:
+                tentativeGScore += 7
+
+            if shortestRoute > -1 and tentativeGScore > shortestRoute:
+                continue
+
+            if option in gScore and tentativeGScore >= gScore[option]:
+                continue
+            open.enqueue(option)
+
+            cameFrom[option] = curr
+            gScore[option] = tentativeGScore
+            # fscore[option.pos] = tentativeGScore + manhattenDist(option.pos, target)
+
+    if debug:
+        var
+            rebuild = target
+            # route: seq[PosTool]
+            route = initTable[Coord, Tool]()
+        route[[0, 0]] = torch
+        while rebuild.pos != [0, 0]:
+            # route.add(rebuild)
+            route[rebuild.pos] = rebuild.tool
+            rebuild = cameFrom[rebuild]
+        # route.add(rebuild)
+        var debugOut: string
+        for y in 0..map.high:
+            if y > 0: debugOut.add("\n")
+            for x in 0..map[0].high:
+                if [x, y] in route:
+                    debugOut.add($route[[x, y]])
+                else:
+                    debugOut.add($map[[x, y]])
+        echo debugOut
+        # echo route.reversed().mapIt(&"{it.pos} {it.tool} {gScore[it]} {map[it.pos]}")
+    return shortestRoute
+
+
+let testMap = generate([10, 10], 510, debug=false)
 check:
     int(rocky) == 0
     int(wet) == 1
     int(narrow) == 2
 
-    [10, 10].riskLevel(510, debug=false) == 114
+    testMap.riskLevel([10, 10], debug=false) == 114
+    testMap.rescue([10, 10], debug=false) == 45
 
-echo &"Part 1: {TARGET.riskLevel(DEPTH)}"
+let inputMap = generate(TARGET, DEPTH)
+echo &"Part 1: {inputMap.riskLevel(TARGET)}"
+echo &"Part 2: {inputMap.rescue(TARGET, debug=false)}"
