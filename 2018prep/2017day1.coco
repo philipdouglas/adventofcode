@@ -1,0 +1,16 @@
+with open("../.cache/input_2017_1") as infile:
+    digits = infile.read()
+
+digits = digits |> .strip() |> map$(int) |> list
+
+def captcha(digits):
+    return check(digits + [digits[0]])
+
+def check(digits):
+    case digits:
+        match [[first] + [[second] + rest]]:
+            check([[second] + rest]) + (first if first == second else 0)
+    else:
+        return 0
+
+assert captcha([1, 1, 2, 2]) == 3

@@ -1,0 +1,378 @@
+Test 1: 11100110111101110
+Test 2: 10001101010000101
+         16238 function calls (15988 primitive calls) in 3.212 seconds
+
+   Ordered by: cumulative time
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+     11/1    0.006    0.001    3.228    3.228 {built-in function exec}
+        1    0.001    0.001    3.228    3.228 16.py:1(<module>)
+        2    0.000    0.000    3.151    1.576 16.py:37(fill_disk)
+        2    0.000    0.000    1.618    0.809 16.py:26(checksum)
+       25    1.617    0.065    1.617    0.065 16.py:32(<listcomp>)
+        2    0.030    0.015    1.533    0.767 16.py:16(pad)
+       25    0.244    0.010    1.504    0.060 16.py:1(onepad)
+       95    1.260    0.013    1.260    0.013 {method 'replace' of 'str' objects}
+        1    0.000    0.000    0.043    0.043 doctest.py:1813(testmod)
+       13    0.000    0.000    0.034    0.003 doctest.py:1374(run)
+        1    0.004    0.004    0.033    0.033 doctest.py:9(<module>)
+       13    0.000    0.000    0.032    0.002 doctest.py:323(__init__)
+       13    0.005    0.000    0.032    0.002 pdb.py:143(__init__)
+       24    0.000    0.000    0.012    0.000 re.py:212(compile)
+       24    0.000    0.000    0.012    0.000 re.py:267(_compile)
+       12    0.000    0.000    0.011    0.001 sre_compile.py:484(compile)
+      130    0.001    0.000    0.010    0.000 {built-in function __build_class__}
+        1    0.000    0.000    0.009    0.009 doctest.py:805(find)
+        1    0.001    0.001    0.008    0.008 readline.py:1(<module>)
+     13/1    0.000    0.000    0.008    0.008 doctest.py:927(_find)
+       10    0.001    0.000    0.008    0.001 collections.py:297(namedtuple)
+       13    0.000    0.000    0.008    0.001 doctest.py:990(_get_test)
+       12    0.000    0.000    0.007    0.001 sre_parse.py:693(parse)
+        1    0.000    0.000    0.007    0.007 doctest.py:539(DocTestParser)
+        1    0.001    0.001    0.007    0.007 inspect.py:1(<module>)
+    34/12    0.000    0.000    0.007    0.001 sre_parse.py:309(_parse_sub)
+    37/12    0.002    0.000    0.007    0.001 sre_parse.py:387(_parse)
+       13    0.000    0.000    0.007    0.001 doctest.py:1027(_find_lineno)
+        1    0.003    0.003    0.005    0.005 pdb.py:3(<module>)
+      692    0.005    0.000    0.005    0.000 {method 'match' of 'SRE_Pattern' objects}
+        2    0.002    0.001    0.005    0.002 __init__.py:1(<module>)
+       14    0.005    0.000    0.005    0.000 {built-in function _io.open}
+       12    0.000    0.000    0.004    0.000 sre_compile.py:469(_code)
+        1    0.001    0.001    0.004    0.004 historical_reader.py:20(<module>)
+     1117    0.001    0.000    0.004    0.000 sre_parse.py:209(get)
+     1200    0.003    0.000    0.003    0.000 sre_parse.py:184(__next)
+    76/12    0.001    0.000    0.003    0.000 sre_compile.py:32(_compile)
+        1    0.001    0.001    0.002    0.002 difflib.py:3(<module>)
+        1    0.000    0.000    0.002    0.002 reader.py:22(<module>)
+       21    0.000    0.000    0.002    0.000 sre_compile.py:178(_compile_charset)
+       21    0.002    0.000    0.002    0.000 sre_compile.py:207(_optimize_charset)
+        1    0.001    0.001    0.002    0.002 bdb.py:1(<module>)
+        1    0.000    0.000    0.001    0.001 result.py:1(<module>)
+        1    0.001    0.001    0.001    0.001 dis.py:1(<module>)
+     1929    0.001    0.000    0.001    0.000 {built-in function isinstance}
+        1    0.001    0.001    0.001    0.001 fnmatch.py:1(<module>)
+       13    0.000    0.000    0.001    0.000 pdb.py:197(reset)
+        1    0.000    0.000    0.001    0.001 util.py:1(<module>)
+       13    0.000    0.000    0.001    0.000 doctest.py:626(get_doctest)
+       13    0.000    0.000    0.001    0.000 bdb.py:37(reset)
+       12    0.000    0.000    0.001    0.000 sre_compile.py:360(_compile_info)
+       13    0.000    0.000    0.001    0.000 linecache.py:44(checkcache)
+       13    0.000    0.000    0.001    0.000 doctest.py:638(get_examples)
+       15    0.001    0.000    0.001    0.000 {built-in function nt.stat}
+        1    0.000    0.000    0.001    0.001 readline.py:24(<module>)
+       13    0.000    0.000    0.001    0.000 doctest.py:587(parse)
+        1    0.000    0.000    0.001    0.001 main.py:1(<module>)
+        1    0.000    0.000    0.001    0.001 completing_reader.py:21(<module>)
+3017/2972    0.001    0.000    0.001    0.000 {built-in function len}
+   109/50    0.001    0.000    0.001    0.000 sre_parse.py:142(getwidth)
+        1    0.001    0.001    0.001    0.001 code.py:1(<module>)
+        1    0.000    0.000    0.001    0.001 opcode.py:2(<module>)
+        1    0.000    0.000    0.001    0.001 doctest.py:1079(DocTestRunner)
+        1    0.000    0.000    0.001    0.001 commands.py:22(<module>)
+      361    0.000    0.000    0.000    0.000 sre_parse.py:132(__getitem__)
+        1    0.000    0.000    0.000    0.000 linecache.py:34(getlines)
+        1    0.000    0.000    0.000    0.000 linecache.py:69(updatecache)
+        1    0.000    0.000    0.000    0.000 runner.py:1(<module>)
+      105    0.000    0.000    0.000    0.000 opcode.py:27(def_op)
+        1    0.000    0.000    0.000    0.000 historical_reader.py:27(<listcomp>)
+       13    0.000    0.000    0.000    0.000 doctest.py:736(_min_indent)
+       90    0.000    0.000    0.000    0.000 {method 'format' of 'str' objects}
+        1    0.000    0.000    0.000    0.000 loader.py:1(<module>)
+        1    0.000    0.000    0.000    0.000 reader.py:36(_make_unctrl_map)
+        1    0.000    0.000    0.000    0.000 functools.py:139(decorating_function)
+       15    0.000    0.000    0.000    0.000 {method 'findall' of 'SRE_Pattern' objects}
+        1    0.000    0.000    0.000    0.000 collections.py:40(__init__)
+       22    0.000    0.000    0.000    0.000 {method 'join' of 'str' objects}
+        1    0.000    0.000    0.000    0.000 _abcoll.py:493(update)
+      209    0.000    0.000    0.000    0.000 sre_parse.py:203(match)
+      394    0.000    0.000    0.000    0.000 collections.py:338(<genexpr>)
+        1    0.000    0.000    0.000    0.000 abc.py:158(__instancecheck__)
+        1    0.000    0.000    0.000    0.000 unix_console.py:22(<module>)
+      8/1    0.000    0.000    0.000    0.000 abc.py:174(__subclasscheck__)
+     1118    0.000    0.000    0.000    0.000 {method 'append' of 'list' objects}
+        1    0.000    0.000    0.000    0.000 historical_reader.py:24(<listcomp>)
+       15    0.000    0.000    0.000    0.000 _structseq.py:70(structseq_new)
+        1    0.000    0.000    0.000    0.000 tokenize.py:342(open)
+       13    0.000    0.000    0.000    0.000 doctest.py:1230(__run)
+        1    0.000    0.000    0.000    0.000 {method 'readlines' of '_io._IOBase' objects}
+      8/2    0.000    0.000    0.000    0.000 {built-in function issubclass}
+      141    0.000    0.000    0.000    0.000 _structseq.py:22(__get__)
+      181    0.000    0.000    0.000    0.000 sre_parse.py:140(append)
+       13    0.000    0.000    0.000    0.000 doctest.py:180(_extract_future_flags)
+       49    0.000    0.000    0.000    0.000 collections.py:359(<genexpr>)
+       13    0.000    0.000    0.000    0.000 _abcoll.py:363(__contains__)
+       38    0.000    0.000    0.000    0.000 sre_compile.py:355(_simple)
+        1    0.000    0.000    0.000    0.000 case.py:1(<module>)
+       34    0.000    0.000    0.000    0.000 sre_parse.py:265(_escape)
+        2    0.000    0.000    0.000    0.000 sre_compile.py:258(_mk_bitmap)
+        1    0.000    0.000    0.000    0.000 warnings.py:1(<module>)
+       13    0.000    0.000    0.000    0.000 os.py:461(__getitem__)
+        1    0.000    0.000    0.000    0.000 inspect.py:449(getsourcefile)
+      917    0.000    0.000    0.000    0.000 {built-in function chr}
+        1    0.000    0.000    0.000    0.000 tokenize.py:267(detect_encoding)
+       49    0.000    0.000    0.000    0.000 collections.py:358(<genexpr>)
+      204    0.000    0.000    0.000    0.000 {built-in function getattr}
+       12    0.000    0.000    0.000    0.000 doctest.py:907(_from_module)
+       12    0.000    0.000    0.000    0.000 sre_parse.py:180(__init__)
+        9    0.000    0.000    0.000    0.000 _weakrefset.py:58(__iter__)
+        1    0.000    0.000    0.000    0.000 genericpath.py:15(exists)
+        1    0.000    0.000    0.000    0.000 reader.py:155(<listcomp>)
+      130    0.000    0.000    0.000    0.000 sre_parse.py:128(__len__)
+      154    0.000    0.000    0.000    0.000 {built-in function min}
+       25    0.000    0.000    0.000    0.000 inspect.py:481(getmodule)
+       78    0.000    0.000    0.000    0.000 sre_parse.py:92(__init__)
+        4    0.000    0.000    0.000    0.000 _functools.py:60(__call__)
+      241    0.000    0.000    0.000    0.000 {method 'get' of 'dict' objects}
+        1    0.000    0.000    0.000    0.000 {method 'sort' of 'list' objects}
+        1    0.000    0.000    0.000    0.000 result.py:25(TestResult)
+       13    0.000    0.000    0.000    0.000 doctest.py:486(__init__)
+      384    0.000    0.000    0.000    0.000 {method 'isalpha' of 'str' objects}
+        2    0.000    0.000    0.000    0.000 tokenize.py:287(read_or_stop)
+        2    0.000    0.000    0.000    0.000 {method 'readline' of '_io.BufferedReader' objects}
+       13    0.000    0.000    0.000    0.000 os.py:519(encodekey)
+        3    0.000    0.000    0.000    0.000 result.py:13(failfast)
+       66    0.000    0.000    0.000    0.000 inspect.py:62(ismodule)
+        1    0.000    0.000    0.000    0.000 suite.py:1(<module>)
+        2    0.000    0.000    0.000    0.000 sre_parse.py:233(_class_escape)
+       31    0.000    0.000    0.000    0.000 doctest.py:528(__lt__)
+       13    0.000    0.000    0.000    0.000 doctest.py:1353(__record_outcome)
+      345    0.000    0.000    0.000    0.000 {method 'isalnum' of 'str' objects}
+       13    0.000    0.000    0.000    0.000 pdb.py:201(forget)
+      256    0.000    0.000    0.000    0.000 {method 'category' of 'unicodedata.UCD' objects}
+        1    0.000    0.000    0.000    0.000 codeop.py:1(<module>)
+        8    0.000    0.000    0.000    0.000 sre_parse.py:224(isname)
+        4    0.000    0.000    0.000    0.000 functools.py:26(update_wrapper)
+        1    0.000    0.000    0.000    0.000 pprint.py:11(<module>)
+        1    0.000    0.000    0.000    0.000 <string>:1(<module>)
+        1    0.000    0.000    0.000    0.000 signals.py:1(<module>)
+        1    0.000    0.000    0.000    0.000 cmd.py:1(<module>)
+       13    0.000    0.000    0.000    0.000 os.py:513(check_str)
+       15    0.000    0.000    0.000    0.000 {method '__setattr__' of 'stat_result' objects}
+        2    0.000    0.000    0.000    0.000 codecs.py:297(decode)
+       12    0.000    0.000    0.000    0.000 sre_parse.py:681(fix_flags)
+       15    0.000    0.000    0.000    0.000 <string>:12(__new__)
+       15    0.000    0.000    0.000    0.000 sre_parse.py:74(opengroup)
+       38    0.000    0.000    0.000    0.000 inspect.py:157(isfunction)
+        1    0.000    0.000    0.000    0.000 reader.py:153(<listcomp>)
+        1    0.000    0.000    0.000    0.000 input.py:35(<module>)
+        1    0.000    0.000    0.000    0.000 historical_reader.py:25(<listcomp>)
+       29    0.000    0.000    0.000    0.000 {built-in function hasattr}
+       40    0.000    0.000    0.000    0.000 inspect.py:71(isclass)
+       13    0.000    0.000    0.000    0.000 cmd.py:76(__init__)
+       13    0.000    0.000    0.000    0.000 doctest.py:649(<listcomp>)
+        4    0.000    0.000    0.000    0.000 cp1252.py:18(encode)
+        2    0.000    0.000    0.000    0.000 {built-in function _codecs.utf_8_decode}
+        8    0.000    0.000    0.000    0.000 _weakrefset.py:79(add)
+       38    0.000    0.000    0.000    0.000 sre_parse.py:136(__setitem__)
+       13    0.000    0.000    0.000    0.000 doctest.py:738(<listcomp>)
+       13    0.000    0.000    0.000    0.000 bdb.py:21(__init__)
+       24    0.000    0.000    0.000    0.000 sre_compile.py:466(isstring)
+      157    0.000    0.000    0.000    0.000 {built-in function ord}
+       14    0.000    0.000    0.000    0.000 {method 'copy' of 'dict' objects}
+        1    0.000    0.000    0.000    0.000 <string>:5(FullArgSpec)
+       13    0.000    0.000    0.000    0.000 bdb.py:173(_set_stopinfo)
+        1    0.000    0.000    0.000    0.000 posixpath.py:1(<module>)
+       55    0.000    0.000    0.000    0.000 {method 'add' of 'set' objects}
+       12    0.000    0.000    0.000    0.000 sre_parse.py:69(__init__)
+        8    0.000    0.000    0.000    0.000 _weakrefset.py:16(__init__)
+        8    0.000    0.000    0.000    0.000 _weakrefset.py:26(__exit__)
+        1    0.000    0.000    0.000    0.000 <string>:5(Match)
+        1    0.000    0.000    0.000    0.000 doctest.py:1445(summarize)
+        1    0.000    0.000    0.000    0.000 case.py:205(TestCase)
+       10    0.000    0.000    0.000    0.000 {built-in function repr}
+        1    0.000    0.000    0.000    0.000 <string>:5(Traceback)
+        4    0.000    0.000    0.000    0.000 functools.py:54(wraps)
+       15    0.000    0.000    0.000    0.000 _weakrefset.py:68(__contains__)
+        1    0.000    0.000    0.000    0.000 <string>:5(Attribute)
+        2    0.000    0.000    0.000    0.000 tokenize.py:293(find_cookie)
+        1    0.000    0.000    0.000    0.000 <string>:5(Mismatch)
+       15    0.000    0.000    0.000    0.000 sre_parse.py:85(closegroup)
+       88    0.000    0.000    0.000    0.000 {built-in function id}
+        8    0.000    0.000    0.000    0.000 _weakrefset.py:20(__enter__)
+        1    0.000    0.000    0.000    0.000 doctest.py:1139(__init__)
+        1    0.000    0.000    0.000    0.000 <string>:5(ModuleInfo)
+        1    0.000    0.000    0.000    0.000 <string>:5(ArgSpec)
+        4    0.000    0.000    0.000    0.000 {built-in function _codecs.charmap_encode}
+        1    0.000    0.000    0.000    0.000 <string>:5(ArgInfo)
+       11    0.000    0.000    0.000    0.000 opcode.py:31(name_op)
+        1    0.000    0.000    0.000    0.000 pdb.py:141(Pdb)
+       13    0.000    0.000    0.000    0.000 inspect.py:196(istraceback)
+        1    0.000    0.000    0.000    0.000 <string>:5(Arguments)
+       49    0.000    0.000    0.000    0.000 {method '__contains__' of 'frozenset' objects}
+       41    0.000    0.000    0.000    0.000 sre_parse.py:218(isident)
+        1    0.000    0.000    0.000    0.000 <string>:5(TestResults)
+       16    0.000    0.000    0.000    0.000 {method 'lower' of 'str' objects}
+       10    0.000    0.000    0.000    0.000 doctest.py:131(register_optionflag)
+        6    0.000    0.000    0.000    0.000 sre_compile.py:51(fixup)
+       40    0.000    0.000    0.000    0.000 {method 'startswith' of 'str' objects}
+        1    0.000    0.000    0.000    0.000 doctest.py:783(__init__)
+       13    0.000    0.000    0.000    0.000 inspect.py:79(ismethod)
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+        2    0.000    0.000    0.000    0.000 _weakrefset.py:36(__init__)
+       13    0.000    0.000    0.000    0.000 {method 'upper' of 'str' objects}
+        1    0.000    0.000    0.000    0.000 codeop.py:61(<listcomp>)
+       13    0.000    0.000    0.000    0.000 inspect.py:206(isframe)
+        1    0.000    0.000    0.000    0.000 warnings.py:269(WarningMessage)
+       34    0.000    0.000    0.000    0.000 {method 'strip' of 'str' objects}
+       10    0.000    0.000    0.000    0.000 {method 'split' of 'str' objects}
+       13    0.000    0.000    0.000    0.000 {method 'expandtabs' of 'str' objects}
+       13    0.000    0.000    0.000    0.000 inspect.py:220(iscode)
+        1    0.000    0.000    0.000    0.000 historical_reader.py:117(reverse_history_isearch)
+       26    0.000    0.000    0.000    0.000 {method 'clear' of 'dict' objects}
+        9    0.000    0.000    0.000    0.000 {built-in function _sre.getlower}
+        4    0.000    0.000    0.000    0.000 _functools.py:36(__init__)
+        1    0.000    0.000    0.000    0.000 weakref.py:257(__init__)
+        7    0.000    0.000    0.000    0.000 opcode.py:35(jrel_op)
+        1    0.000    0.000    0.000    0.000 bdb.py:13(Bdb)
+       15    0.000    0.000    0.000    0.000 {method 'remove' of 'list' objects}
+        1    0.000    0.000    0.000    0.000 historical_reader.py:135(isearch_add_character)
+        6    0.000    0.000    0.000    0.000 opcode.py:39(jabs_op)
+       49    0.000    0.000    0.000    0.000 {method 'isdigit' of 'str' objects}
+       15    0.000    0.000    0.000    0.000 {method '__new__' of 'structseqtype' objects}
+       18    0.000    0.000    0.000    0.000 {method 'items' of 'dict' objects}
+        1    0.000    0.000    0.000    0.000 reader.py:177(Reader)
+       15    0.000    0.000    0.000    0.000 {method '__new__' of 'type' objects}
+       13    0.000    0.000    0.000    0.000 {method 'keys' of 'dict' objects}
+        1    0.000    0.000    0.000    0.000 loader.py:43(TestLoader)
+        1    0.000    0.000    0.000    0.000 {built-in function _thread.allocate_lock}
+       16    0.000    0.000    0.000    0.000 {built-in function setattr}
+        8    0.000    0.000    0.000    0.000 _weakrefset.py:52(_commit_removals)
+        1    0.000    0.000    0.000    0.000 cmd.py:52(Cmd)
+       11    0.000    0.000    0.000    0.000 {method 'extend' of 'list' objects}
+        1    0.000    0.000    0.000    0.000 {method 'seek' of '_io.BufferedReader' objects}
+       10    0.000    0.000    0.000    0.000 {built-in function sys._getframe}
+        1    0.000    0.000    0.000    0.000 doctest.py:774(DocTestFinder)
+        1    0.000    0.000    0.000    0.000 codecs.py:287(__init__)
+        1    0.000    0.000    0.000    0.000 runner.py:29(TextTestResult)
+        1    0.000    0.000    0.000    0.000 commands.py:132(unix_line_discard)
+       26    0.000    0.000    0.000    0.000 sre_compile.py:24(_identityfunction)
+        1    0.000    0.000    0.000    0.000 {method 'startswith' of 'bytes' objects}
+        8    0.000    0.000    0.000    0.000 {method 'remove' of 'set' objects}
+        1    0.000    0.000    0.000    0.000 difflib.py:1677(HtmlDiff)
+       13    0.000    0.000    0.000    0.000 {method 'scanner' of 'SRE_Pattern' objects}
+        1    0.000    0.000    0.000    0.000 inspect.py:408(getfile)
+        1    0.000    0.000    0.000    0.000 doctest.py:2105(DocTestCase)
+        1    0.000    0.000    0.000    0.000 {built-in function imp.get_suffixes}
+        1    0.000    0.000    0.000    0.000 main.py:80(TestProgram)
+        1    0.000    0.000    0.000    0.000 completing_reader.py:198(CompletingReader)
+        2    0.000    0.000    0.000    0.000 {method 'decode' of 'bytes' objects}
+        8    0.000    0.000    0.000    0.000 {method '__subclasses__' of 'type' objects}
+        8    0.000    0.000    0.000    0.000 _abcoll.py:118(__subclasshook__)
+        1    0.000    0.000    0.000    0.000 historical_reader.py:174(HistoricalReader)
+       10    0.000    0.000    0.000    0.000 {method 'setdefault' of 'dict' objects}
+        1    0.000    0.000    0.000    0.000 difflib.py:46(SequenceMatcher)
+        1    0.000    0.000    0.000    0.000 suite.py:16(BaseTestSuite)
+        4    0.000    0.000    0.000    0.000 {method 'update' of 'dict' objects}
+        1    0.000    0.000    0.000    0.000 case.py:1186(FunctionTestCase)
+        1    0.000    0.000    0.000    0.000 bdb.py:452(Breakpoint)
+        1    0.000    0.000    0.000    0.000 {built-in function _weakref.proxy}
+        8    0.000    0.000    0.000    0.000 _functools.py:56(keywords)
+        1    0.000    0.000    0.000    0.000 doctest.py:1515(OutputChecker)
+        1    0.000    0.000    0.000    0.000 pprint.py:103(PrettyPrinter)
+        1    0.000    0.000    0.000    0.000 suite.py:75(TestSuite)
+        1    0.000    0.000    0.000    0.000 warnings.py:289(catch_warnings)
+        1    0.000    0.000    0.000    0.000 code.py:15(InteractiveInterpreter)
+        9    0.000    0.000    0.000    0.000 case.py:1165(_deprecate)
+        4    0.000    0.000    0.000    0.000 {built-in function max}
+        1    0.000    0.000    0.000    0.000 warnings.py:88(_processoptions)
+        1    0.000    0.000    0.000    0.000 codecs.py:238(__init__)
+        1    0.000    0.000    0.000    0.000 commands.py:33(Command)
+        1    0.000    0.000    0.000    0.000 doctest.py:317(_OutputRedirectingPdb)
+        1    0.000    0.000    0.000    0.000 runner.py:120(TextTestRunner)
+        1    0.000    0.000    0.000    0.000 doctest.py:390(Example)
+        1    0.000    0.000    0.000    0.000 doctest.py:462(DocTest)
+        1    0.000    0.000    0.000    0.000 pprint.py:73(_safe_key)
+        3    0.000    0.000    0.000    0.000 {built-in function globals}
+        1    0.000    0.000    0.000    0.000 runner.py:13(_WritelnDecorator)
+        1    0.000    0.000    0.000    0.000 difflib.py:769(Differ)
+        1    0.000    0.000    0.000    0.000 doctest.py:2268(SkipDocTestCase)
+        1    0.000    0.000    0.000    0.000 suite.py:250(_ErrorHolder)
+        1    0.000    0.000    0.000    0.000 signals.py:9(_InterruptHandler)
+        4    0.000    0.000    0.000    0.000 _functools.py:48(func)
+        1    0.000    0.000    0.000    0.000 doctest.py:2358(DocFileCase)
+        1    0.000    0.000    0.000    0.000 doctest.py:1663(DocTestFailure)
+        1    0.000    0.000    0.000    0.000 historical_reader.py:43(next_history)
+        4    0.000    0.000    0.000    0.000 {built-in function callable}
+        1    0.000    0.000    0.000    0.000 completing_reader.py:143(complete)
+        1    0.000    0.000    0.000    0.000 functools.py:119(lru_cache)
+        1    0.000    0.000    0.000    0.000 code.py:168(InteractiveConsole)
+        1    0.000    0.000    0.000    0.000 input.py:40(InputTranslator)
+        1    0.000    0.000    0.000    0.000 codeop.py:124(Compile)
+        1    0.000    0.000    0.000    0.000 warnings.py:83(_OptionError)
+        1    0.000    0.000    0.000    0.000 historical_reader.py:145(isearch_backspace)
+        1    0.000    0.000    0.000    0.000 doctest.py:2608(_TestClass)
+        1    0.000    0.000    0.000    0.000 case.py:30(_ExpectedFailure)
+        1    0.000    0.000    0.000    0.000 input.py:49(KeymapTranslator)
+        1    0.000    0.000    0.000    0.000 commands.py:378(QITrans)
+        1    0.000    0.000    0.000    0.000 doctest.py:1682(UnexpectedException)
+        1    0.000    0.000    0.000    0.000 doctest.py:1701(DebugRunner)
+        1    0.000    0.000    0.000    0.000 doctest.py:245(_SpoofOut)
+        1    0.000    0.000    0.000    0.000 bdb.py:9(BdbQuit)
+        1    0.000    0.000    0.000    0.000 historical_reader.py:51(previous_history)
+        1    0.000    0.000    0.000    0.000 case.py:22(SkipTest)
+        1    0.000    0.000    0.000    0.000 {method 'endswith' of 'str' objects}
+        1    0.000    0.000    0.000    0.000 pdb.py:128(_rstr)
+        1    0.000    0.000    0.000    0.000 commands.py:45(KillCommand)
+        1    0.000    0.000    0.000    0.000 historical_reader.py:107(forward_history_isearch)
+        1    0.000    0.000    0.000    0.000 inspect.py:639(EndOfBlock)
+        1    0.000    0.000    0.000    0.000 inspect.py:641(BlockFinder)
+        1    0.000    0.000    0.000    0.000 codeop.py:139(CommandCompiler)
+        1    0.000    0.000    0.000    0.000 case.py:122(_AssertRaisesContext)
+        1    0.000    0.000    0.000    0.000 historical_reader.py:76(operate_and_get_next)
+        1    0.000    0.000    0.000    0.000 commands.py:189(suspend)
+        1    0.000    0.000    0.000    0.000 case.py:104(_AssertRaisesBaseContext)
+        1    0.000    0.000    0.000    0.000 historical_reader.py:160(isearch_backwards)
+        1    0.000    0.000    0.000    0.000 commands.py:84(digit_arg)
+        2    0.000    0.000    0.000    0.000 sre_parse.py:213(tell)
+        1    0.000    0.000    0.000    0.000 pdb.py:83(Restart)
+        1    0.000    0.000    0.000    0.000 commands.py:140(unix_word_rubout)
+        1    0.000    0.000    0.000    0.000 historical_reader.py:154(isearch_forwards)
+        1    0.000    0.000    0.000    0.000 commands.py:266(beginning_of_line)
+        1    0.000    0.000    0.000    0.000 historical_reader.py:59(restore_history)
+        1    0.000    0.000    0.000    0.000 commands.py:384(quoted_insert)
+        1    0.000    0.000    0.000    0.000 case.py:155(_AssertWarnsContext)
+        1    0.000    0.000    0.000    0.000 suite.py:297(_DebugResult)
+        1    0.000    0.000    0.000    0.000 historical_reader.py:68(first_history)
+        1    0.000    0.000    0.000    0.000 bdb.py:618(Tdb)
+        1    0.000    0.000    0.000    0.000 historical_reader.py:126(isearch_cancel)
+        1    0.000    0.000    0.000    0.000 commands.py:350(accept)
+        1    0.000    0.000    0.000    0.000 commands.py:354(help)
+        1    0.000    0.000    0.000    0.000 commands.py:359(invalid_key)
+        1    0.000    0.000    0.000    0.000 commands.py:204(up)
+        1    0.000    0.000    0.000    0.000 commands.py:283(forward_word)
+        1    0.000    0.000    0.000    0.000 completing_reader.py:180(self_insert)
+        4    0.000    0.000    0.000    0.000 _functools.py:52(args)
+        1    0.000    0.000    0.000    0.000 commands.py:120(kill_line)
+        1    0.000    0.000    0.000    0.000 commands.py:72(FinishCommand)
+        1    0.000    0.000    0.000    0.000 case.py:47(_Outcome)
+        1    0.000    0.000    0.000    0.000 commands.py:289(backward_word)
+        1    0.000    0.000    0.000    0.000 commands.py:152(backward_kill_word)
+        1    0.000    0.000    0.000    0.000 historical_reader.py:166(isearch_end)
+        1    0.000    0.000    0.000    0.000 commands.py:115(repaint)
+        1    0.000    0.000    0.000    0.000 commands.py:146(kill_word)
+        1    0.000    0.000    0.000    0.000 commands.py:279(end)
+        1    0.000    0.000    0.000    0.000 commands.py:69(EditCommand)
+        1    0.000    0.000    0.000    0.000 commands.py:63(YankCommand)
+        1    0.000    0.000    0.000    0.000 commands.py:322(backspace)
+        1    0.000    0.000    0.000    0.000 case.py:41(_UnexpectedSuccess)
+        1    0.000    0.000    0.000    0.000 historical_reader.py:72(last_history)
+        1    0.000    0.000    0.000    0.000 commands.py:183(interrupt)
+        1    0.000    0.000    0.000    0.000 commands.py:245(left)
+        1    0.000    0.000    0.000    0.000 commands.py:305(transpose_characters)
+        1    0.000    0.000    0.000    0.000 commands.py:224(down)
+        1    0.000    0.000    0.000    0.000 commands.py:300(insert_nl)
+        1    0.000    0.000    0.000    0.000 commands.py:158(yank)
+        1    0.000    0.000    0.000    0.000 commands.py:270(end_of_line)
+        1    0.000    0.000    0.000    0.000 commands.py:111(refresh)
+        1    0.000    0.000    0.000    0.000 commands.py:275(home)
+        1    0.000    0.000    0.000    0.000 commands.py:105(clear_screen)
+        1    0.000    0.000    0.000    0.000 commands.py:295(self_insert)
+        1    0.000    0.000    0.000    0.000 commands.py:370(qIHelp)
+        1    0.000    0.000    0.000    0.000 commands.py:365(invalid_command)
+        1    0.000    0.000    0.000    0.000 commands.py:255(right)
+        1    0.000    0.000    0.000    0.000 historical_reader.py:80(yank_arg)
+        1    0.000    0.000    0.000    0.000 commands.py:334(delete)
+        1    0.000    0.000    0.000    0.000 commands.py:166(yank_pop)
+        1    0.000    0.000    0.000    0.000 commands.py:66(MotionCommand)
+
+

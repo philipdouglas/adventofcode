@@ -1,0 +1,11 @@
+*.sublime-*
+_build
+.elixir_ls
+.vscode
+*.dump
+profile_results.txt
+*.exe
+deps/
+__pycache__/
+*.pyc
+.aoc_session
