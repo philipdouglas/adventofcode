@@ -66,14 +66,38 @@ iterator `..<`*(a, b: Coord): Coord =
         for y in (a.y)..<(b.y):
             yield [x, y]
 
+iterator `..`*(a, b: Coord3): Coord3 =
+    for x in (a.x)..(b.x):
+        for y in (a.y)..(b.y):
+            for z in (a.z)..(b.z):
+                yield [x, y, z]
+
+iterator `..<`*(a, b: Coord3): Coord3 =
+    for x in (a.x)..<(b.x):
+        for y in (a.y)..<(b.y):
+            for z in (a.z)..<(b.z):
+                yield [x, y, z]
+
 template xmax*(coords: seq[Coord]): int =
     max(coords.map((c) => c.x))
 
 template ymax*(coords: seq[Coord]): int =
     max(coords.map((c) => c.y))
 
+template xmax*(coords: seq[Coord3]): int =
+    max(coords.map((c) => c.x))
+
+template ymax*(coords: seq[Coord3]): int =
+    max(coords.map((c) => c.y))
+
+template zmax*(coords: seq[Coord3]): int =
+    max(coords.map((c) => c.z))
+
 template max*(coords: seq[Coord]): Coord =
     [xmax(coords), ymax(coords)]
+
+template max*(coords: seq[Coord3]): Coord3 =
+    [xmax(coords), ymax(coords), zmax(coords)]
 
 template xmin*(coords: seq[Coord]): int =
     min(coords.map((c) => c.x))
@@ -81,8 +105,20 @@ template xmin*(coords: seq[Coord]): int =
 template ymin*(coords: seq[Coord]): int =
     min(coords.map((c) => c.y))
 
+template xmin*(coords: seq[Coord3]): int =
+    min(coords.map((c) => c.x))
+
+template ymin*(coords: seq[Coord3]): int =
+    min(coords.map((c) => c.y))
+
+template zmin*(coords: seq[Coord3]): int =
+    min(coords.map((c) => c.z))
+
 template min*(coords: seq[Coord]): Coord =
     [xmin(coords), ymin(coords)]
+
+template min*(coords: seq[Coord3]): Coord3 =
+    [xmin(coords), ymin(coords), zmin(coords)]
 
 proc minmax*(coords: seq[Coord]): tuple[xmin, xmax, ymin, ymax: int] =
     return (coords.xmin, coords.xmax, coords.ymin, coords.ymax)
@@ -126,6 +162,14 @@ proc cmp*(a, b: Coord): int =
     result = cmp(a.y, b.y)
     if result == 0:
         result = cmp(a.x, b.x)
+
+
+proc cmp*(a, b: Coord3): int =
+    result = cmp(a.y, b.y)
+    if result == 0:
+        result = cmp(a.x, b.x)
+    if result == 0:
+        result = cmp(a.z, b.z)
 
 
 template `[]`*[T](multiarray: seq[seq[T]], pos: Coord): T =
