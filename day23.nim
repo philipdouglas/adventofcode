@@ -4,11 +4,8 @@ import sequtils
 import strformat
 import strscans
 import strutils
-import sugar
 import tables
 from unittest import check
-
-import itertools
 
 import aoc
 import coord
@@ -28,9 +25,7 @@ let input = input(day=23, year=2018).split("\n").parseInput()
 
 proc strongestSignal(nanobots: seq[Nanobot]): int =
     let biggest = nanobots.sortedByIt(it.r)[^1]
-    for bot in nanobots:
-        if bot.pos.manhattenDist(biggest.pos) <= biggest.r:
-            result.inc
+    return nanobots.filterIt(it.pos.manhattenDist(biggest.pos) <= biggest.r).len
 
 
 proc optimalPosition(nanobots: seq[Nanobot]): int =
@@ -44,7 +39,7 @@ proc optimalPosition(nanobots: seq[Nanobot]): int =
     while sampleSize >= 1:
         for point in countup(fromPoint, toPoint, sampleSize):
             let
-                count = nanobots.filterIt(it.pos.manhattenDist(point) <= it.r).len()
+                count = nanobots.filterIt(it.pos.manhattenDist(point) <= it.r).len
                 newResult = point.manhattenDist()
             if count > target or (count == target and newResult < result):
                 target = count
