@@ -39,29 +39,21 @@ proc optimalPosition(nanobots: seq[Nanobot]): int =
         fromPoint = min(allcoords)
         toPoint = max(allcoords)
         sampleSize = nextPowerOfTwo(toPoint.x - fromPoint.x)
-        bestResult = -1
         best: Coord3
         target = 0
-    while true:
+    while sampleSize >= 1:
         for point in countup(fromPoint, toPoint, sampleSize):
-            var count = 0
-            for bot in nanobots:
-                if ((bot.pos.manhattenDist(point) - bot.r) / sampleSize) <= 0:
-                    count.inc
-            if count > target:
+            let
+                count = nanobots.filterIt(it.pos.manhattenDist(point) <= it.r).len()
+                newResult = point.manhattenDist()
+            if count > target or (count == target and newResult < result):
                 target = count
-                bestResult = point.manhattenDist()
+                result = newResult
                 best = point
-            elif count == target and point.manhattenDist < bestResult:
-                bestResult = point.manhattenDist()
-                best = point
-        if sampleSize == 1:
-            return bestResult
-        else:
-            let modifier = [sampleSize, sampleSize, sampleSize]
-            fromPoint = best - modifier
-            toPoint = best + modifier
-            sampleSize = sampleSize div 2
+
+        fromPoint = best - sampleSize
+        toPoint = best + sampleSize
+        sampleSize = sampleSize div 2
 
 
 check:

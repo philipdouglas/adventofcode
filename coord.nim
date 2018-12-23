@@ -32,6 +32,18 @@ template `+`*(a, b: Coord3): Coord3 =
 template `-`*(a, b: Coord3): Coord3 =
     [a.x - b.x, a.y - b.y, a.z - b.z]
 
+template `+`*(a: Coord, b: int): Coord =
+    [a.x + b, a.y + b]
+template `-`*(a: Coord, b: int): Coord =
+    [a.x - b, a.y - b]
+
+template `+`*(a: Coord3, b: int): Coord3 =
+    [a.x + b, a.y + b, a.z + b]
+template `-`*(a: Coord3, b: int): Coord3 =
+    [a.x - b, a.y - b, a.z - b]
+
+
+
 template `+=`*(a: var Coord, b: Coord) =
     a = a + b
 
