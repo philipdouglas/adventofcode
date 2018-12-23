@@ -3,7 +3,9 @@ import strformat
 import strscans
 import sugar
 
-type Coord* = array[2, int]
+type 
+    Coord* = array[2, int]
+    Coord3* = array[3, int]
 
 template x*(coord: Coord): int =
     coord[0]
@@ -11,10 +13,24 @@ template x*(coord: Coord): int =
 template y*(coord: Coord): int =
     coord[1]
 
+template x*(coord: Coord3): int =
+    coord[0]
+
+template y*(coord: Coord3): int =
+    coord[1]
+
+template z*(coord: Coord3): int =
+    coord[2]
+
 template `+`*(a, b: Coord): Coord =
     [a.x + b.x, a.y + b.y]
 template `-`*(a, b: Coord): Coord =
     [a.x - b.x, a.y - b.y]
+
+template `+`*(a, b: Coord3): Coord3 =
+    [a.x + b.x, a.y + b.y, a.z + b.z]
+template `-`*(a, b: Coord3): Coord3 =
+    [a.x - b.x, a.y - b.y, a.z - b.z]
 
 template `+=`*(a: var Coord, b: Coord) =
     a = a + b
@@ -35,6 +51,10 @@ template `-=`*(a: var seq[Coord], b: seq[Coord]) =
 proc manhattenDist*(a, b: Coord = [0, 0]): int =
     let a = a - b
     return a.x.abs + a.y.abs
+
+proc manhattenDist*(a, b: Coord3 = [0, 0, 0]): int =
+    let a = a - b
+    return a.x.abs + a.y.abs + a.z.abs
 
 iterator `..`*(a, b: Coord): Coord =
     for x in (a.x)..(b.x):
