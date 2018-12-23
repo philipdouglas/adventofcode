@@ -3,7 +3,7 @@ import strformat
 import strscans
 import sugar
 
-type 
+type
     Coord* = array[2, int]
     Coord3* = array[3, int]
 
@@ -48,13 +48,13 @@ template `-=`*(a: var seq[Coord], b: seq[Coord]) =
     for i in 0..<a.len:
         a[i] -= b[i]
 
-proc manhattenDist*(a, b: Coord = [0, 0]): int =
-    let a = a - b
-    return a.x.abs + a.y.abs
+template manhattenDist*(a, b: Coord = [0, 0]): int =
+    let v = a - b
+    v.x.abs + v.y.abs
 
-proc manhattenDist*(a, b: Coord3 = [0, 0, 0]): int =
-    let a = a - b
-    return a.x.abs + a.y.abs + a.z.abs
+template manhattenDist*(a, b: Coord3 = [0, 0, 0]): int =
+    let v = a - b
+    v.x.abs + v.y.abs + v.z.abs
 
 iterator `..`*(a, b: Coord): Coord =
     for x in (a.x)..(b.x):
@@ -76,6 +76,19 @@ iterator `..<`*(a, b: Coord3): Coord3 =
     for x in (a.x)..<(b.x):
         for y in (a.y)..<(b.y):
             for z in (a.z)..<(b.z):
+                yield [x, y, z]
+
+
+iterator countup*(a, b: Coord, step: int): Coord =
+    for x in countup(a.x, b.x, step):
+        for y in countup(a.y, b.y, step):
+            yield [x, y]
+
+
+iterator countup*(a, b: Coord3, step: int): Coord3 =
+    for x in countup(a.x, b.x, step):
+        for y in countup(a.y, b.y, step):
+            for z in countup(a.z, b.z, step):
                 yield [x, y, z]
 
 template xmax*(coords: seq[Coord]): int =

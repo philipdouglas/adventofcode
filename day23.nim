@@ -33,34 +33,9 @@ proc strongestSignal(nanobots: seq[Nanobot]): int =
             result.inc
 
 
-iterator countup(a, b: Coord3, step: int): Coord3 =
-    for x in countup(a.x, b.x, step):
-        for y in countup(a.y, b.y, step):
-            for z in countup(a.z, b.z, step):
-                yield [x, y, z]
-
-
 proc optimalPosition(nanobots: seq[Nanobot]): int =
-    # var 
-    #     smallest = -1
-    #     smallestTrio: seq[Nanobot]
-    # for trio in combinations(nanobots, 3):
-    #     let perimeter = manhattenDist(trio[0].pos, trio[1].pos) + manhattenDist(trio[1].pos, trio[2].pos) + manhattenDist(trio[0].pos, trio[2].pos)
-    #     if perimeter < smallest or smallest == -1:
-    #         smallest = perimeter
-    #         smallestTrio = trio
-    # var strengths = initTable[Coord3, int]()
-    # var allcoords = smallestTrio.mapIt(it.pos)
-    # for pos in min(allcoords)..max(allcoords):
-    #     strengths[pos] = 0
-    #     for bot in nanobots:
-    #         if bot.pos.manhattenDist(pos) <= bot.r:
-    #             strengths[pos].inc
-    # let biggest = toSeq(strengths.values).max
-    # let ties = toSeq(strengths.keys).filterIt(strengths[it] == biggest)
-    # return ties.sortedByIt(it.manhattenDist())[0].manhattenDist()
     let allcoords = nanobots.mapIt(it.pos)
-    var 
+    var
         fromPoint = min(allcoords)
         toPoint = max(allcoords)
         sampleSize = nextPowerOfTwo(toPoint.x - fromPoint.x)
@@ -87,7 +62,7 @@ proc optimalPosition(nanobots: seq[Nanobot]): int =
             fromPoint = best - modifier
             toPoint = best + modifier
             sampleSize = sampleSize div 2
-    
+
 
 check:
     @[
