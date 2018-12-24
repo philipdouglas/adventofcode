@@ -2,10 +2,8 @@ import algorithm
 import math
 import re
 import sequtils
-import sets
 import strformat
 import strutils
-import sugar
 import tables
 from unittest import check
 
@@ -26,12 +24,15 @@ type
         initiative: int
         side: Side
         id: int
+let types = toSeq(Type.low..Type.high).mapIt($it)
+
 
 template effectivePower(group: Group): int =
     max(group.units, 0) * group.attackDamage
 
 
-let types = toSeq(Type.low..Type.high).mapIt($it)
+proc clone(groups: seq[Group]): seq[Group] =
+    deepCopy(result, groups)
 
 
 proc parse(line: string, side: Side): Group =
@@ -65,12 +66,10 @@ proc `$`(group: Group): string =
 
 
 proc parse(lines: seq[string]): tuple[immuneSys: seq[Group], infection: seq[Group]] =
-    var
-        mode = 0
+    var mode = 0
     for line in lines:
-        if line == "": continue
-        if line == "Immune System:":
-            mode = 0
+        if line in @["", "Immune System:"]:
+            continue
         elif line == "Infection:":
             mode = 1
         elif mode == 0:
@@ -124,40 +123,39 @@ proc pickTarget(attacker: Group, targets: seq[Group], picked: var OrderedTable[i
         picked[bestTarget.id] = attacker.id
 
 
-proc combat(immuneSysIn: seq[Group], infectionsIn: seq[Group], boost: int = 0,
+proc combat(immuneSys: seq[Group], infections: seq[Group], boost: int = 0,
             debug: bool = false): tuple[survivors: int, winners: Side] =
     var
-        immuneSys: seq[Group]
-        infections: seq[Group]
-    deepCopy(immuneSys, immuneSysIn)
-    deepCopy(infections, infectionsIn)
-    var lookupTable = concat(immuneSys, infections)
+        immuneSys = clone(immuneSys)
+        infections = clone(infections)
+        lookupTable = concat(immuneSys, infections)
     for group in immuneSys:
         group.attackDamage += boost
     for i, group in lookupTable.mpairs:
         group.id = i
     if debug: pause(&"{immuneSys}\n{infections}")
     while true:
-        var allGroups = concat(immuneSys, infections).sorted(cmp).reversed()
         var picks = initOrderedTable[int, int]()
-        for group in allGroups:
+        for group in concat(immuneSys, infections).sorted(cmp).reversed():
             if group.side == immune:
                 pickTarget(group, infections, picks)
             else:
                 pickTarget(group, immuneSys, picks)
-        let attacks = toSeq(picks.pairs).mapIt((lookupTable[it[1]], lookupTable[it[0]]))
+        let attacks = toSeq(picks.pairs).mapIt(
+            (a: lookupTable[it[1]], v: lookupTable[it[0]]))
         var stalemate = true
-        for attack in attacks.sortedByIt(it[0].initiative).reversed:
-            var attacker, victim: Group
-            (attacker, victim) = attack
-            if attacker.units <= 0: continue
-            let damage = attacker.calcDamage(victim)
-            if debug: echo &"Group {attacker.id} kills {min(damage div victim.hp, victim.units)} ({damage} / {victim.hp}) from Group {victim.id}"
-            let kills = damage div victim.hp
+        for attack in attacks.sortedByIt(it.a.initiative).reversed:
+            var victim = attack.v
+            let
+                attacker = attack.a
+                damage = attacker.calcDamage(victim)
+                kills = min(damage div victim.hp, victim.units)
+            if debug: echo &"Group {attacker.id} kills {kills} ({damage} / {victim.hp}) from Group {victim.id}"
             victim.units -= kills
-            if kills > 0: stalemate = false
+            if kills > 0:
+                stalemate = false
         if stalemate:
-            return (0, tie)
+            return (concat(immuneSys, infections).mapIt(it.units).sum(), tie)
         immuneSys = immuneSys.filterIt(it.units > 0)
         infections = infections.filterIt(it.units > 0)
         if debug: pause(&"{immuneSys}\n{infections}")
