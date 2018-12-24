@@ -103,7 +103,6 @@ proc calcDamage(a, b: Group): int =
         return 0
     elif a.attackType in b.weaknesses:
         result *= 2
-    # result = min(result div b.hp, b.units) * b.hp
 
 
 proc pickTarget(attacker: Group, targets: seq[Group], picked: var OrderedTable[int, int]) =
@@ -151,8 +150,6 @@ proc combat(immuneSysIn: seq[Group], infectionsIn: seq[Group], boost: int = 0,
         for attack in attacks.sortedByIt(it[0].initiative).reversed:
             var attacker, victim: Group
             (attacker, victim) = attack
-            # var victim = lookupTable[victimId]
-            # let attacker = lookupTable[picks[victimId]]
             if attacker.units <= 0: continue
             let damage = attacker.calcDamage(victim)
             if debug: echo &"Group {attacker.id} kills {min(damage div victim.hp, victim.units)} ({damage} / {victim.hp}) from Group {victim.id}"
