@@ -15,7 +15,7 @@ let pattern = re"(\d+) units each with (\d+) hit points (?:\(([a-z, ;]+)?\))? ?w
 
 type
     Type = enum fire, cold, slashing, bludgeoning, radiation
-    Side = enum immune, infection
+    Side = enum immune, infection, tie
     Group = ref object
         units: int
         hp: int
@@ -125,23 +125,29 @@ proc pickTarget(attacker: Group, targets: seq[Group], picked: var OrderedTable[i
         picked[bestTarget.id] = attacker.id
 
 
-proc combat(immuneSys: seq[Group], infection: seq[Group], debug: bool = false): int =
+proc combat(immuneSysIn: seq[Group], infectionsIn: seq[Group], boost: int = 0,
+            debug: bool = false): tuple[survivors: int, winners: Side] =
     var
-        immuneSys = immuneSys
-        infection = infection
-        lookupTable = concat(immuneSys, infection)
+        immuneSys: seq[Group]
+        infections: seq[Group]
+    deepCopy(immuneSys, immuneSysIn)
+    deepCopy(infections, infectionsIn)
+    var lookupTable = concat(immuneSys, infections)
+    for group in immuneSys:
+        group.attackDamage += boost
     for i, group in lookupTable.mpairs:
         group.id = i
-    if debug: pause(&"{immuneSys}\n{infection}")
+    if debug: pause(&"{immuneSys}\n{infections}")
     while true:
-        var allGroups = concat(immuneSys, infection).sorted(cmp).reversed()
+        var allGroups = concat(immuneSys, infections).sorted(cmp).reversed()
         var picks = initOrderedTable[int, int]()
         for group in allGroups:
             if group.side == immune:
-                pickTarget(group, infection, picks)
+                pickTarget(group, infections, picks)
             else:
                 pickTarget(group, immuneSys, picks)
         let attacks = toSeq(picks.pairs).mapIt((lookupTable[it[1]], lookupTable[it[0]]))
+        var stalemate = true
         for attack in attacks.sortedByIt(it[0].initiative).reversed:
             var attacker, victim: Group
             (attacker, victim) = attack
@@ -150,18 +156,35 @@ proc combat(immuneSys: seq[Group], infection: seq[Group], debug: bool = false): 
             if attacker.units <= 0: continue
             let damage = attacker.calcDamage(victim)
             if debug: echo &"Group {attacker.id} kills {min(damage div victim.hp, victim.units)} ({damage} / {victim.hp}) from Group {victim.id}"
-            victim.units -= damage div victim.hp
+            let kills = damage div victim.hp
+            victim.units -= kills
+            if kills > 0: stalemate = false
+        if stalemate:
+            return (0, tie)
         immuneSys = immuneSys.filterIt(it.units > 0)
-        infection = infection.filterIt(it.units > 0)
-        if debug: pause(&"{immuneSys}\n{infection}")
+        infections = infections.filterIt(it.units > 0)
+        if debug: pause(&"{immuneSys}\n{infections}")
         if immuneSys.len == 0:
-            return infection.mapIt(it.units).sum()
-        if infection.len == 0:
-            return immuneSys.mapIt(it.units).sum()
+            return (infections.mapIt(it.units).sum(), infection)
+        if infections.len == 0:
+            return (immuneSys.mapIt(it.units).sum(), immune)
+
+
+proc optimise(immuneSys: seq[Group], infections: seq[Group], debug: bool = false): int =
+    var
+        winner = infection
+        boost = 0
+    while winner != immune:
+        boost.inc
+        (result, winner) = combat(immuneSys, infections, boost)
+        if debug: pause(&"{boost}: {winner} {result}")
 
 
 check:
-    combat(testInputImmune, testInputInfection, false) == 5216
+    combat(testInputImmune, testInputInfection, debug=false) == (5216, infection)
+    combat(testInputImmune, testInputInfection, 1570, debug=false) == (51, immune)
 
 
-echo &"Part 1: {combat(inputImmune, inputInfection)}"
+let part1 = combat(inputImmune, inputInfection)
+echo &"Part 1: {part1.survivors}"
+echo &"Part 2: {optimise(inputImmune, inputInfection, false)}"
