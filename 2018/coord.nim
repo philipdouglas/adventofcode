@@ -6,6 +6,7 @@ import sugar
 type
     Coord* = array[2, int]
     Coord3* = array[3, int]
+    Coord4* = array[4, int]
 
 template x*(coord: Coord): int =
     coord[0]
@@ -22,6 +23,18 @@ template y*(coord: Coord3): int =
 template z*(coord: Coord3): int =
     coord[2]
 
+template x*(coord: Coord4): int =
+    coord[0]
+
+template y*(coord: Coord4): int =
+    coord[1]
+
+template z*(coord: Coord4): int =
+    coord[2]
+
+template t*(coord: Coord4): int =
+    coord[3]
+
 template `+`*(a, b: Coord): Coord =
     [a.x + b.x, a.y + b.y]
 template `-`*(a, b: Coord): Coord =
@@ -32,6 +45,11 @@ template `+`*(a, b: Coord3): Coord3 =
 template `-`*(a, b: Coord3): Coord3 =
     [a.x - b.x, a.y - b.y, a.z - b.z]
 
+template `+`*(a, b: Coord4): Coord4 =
+    [a.x + b.x, a.y + b.y, a.z + b.z, a.t + b.t]
+template `-`*(a, b: Coord4): Coord4 =
+    [a.x - b.x, a.y - b.y, a.z - b.z, a.t - b.t]
+
 template `+`*(a: Coord, b: int): Coord =
     [a.x + b, a.y + b]
 template `-`*(a: Coord, b: int): Coord =
@@ -41,7 +59,6 @@ template `+`*(a: Coord3, b: int): Coord3 =
     [a.x + b, a.y + b, a.z + b]
 template `-`*(a: Coord3, b: int): Coord3 =
     [a.x - b, a.y - b, a.z - b]
-
 
 
 template `+=`*(a: var Coord, b: Coord) =
@@ -67,6 +84,10 @@ template manhattenDist*(a, b: Coord = [0, 0]): int =
 template manhattenDist*(a, b: Coord3 = [0, 0, 0]): int =
     let v = a - b
     v.x.abs + v.y.abs + v.z.abs
+
+template manhattenDist*(a, b: Coord4 = [0, 0, 0, 0]): int =
+    let v = a - b
+    v.x.abs + v.y.abs + v.z.abs + v.t.abs
 
 iterator `..`*(a, b: Coord): Coord =
     for x in (a.x)..(b.x):
