@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "advent-of-code": "^4.0.3"
+  },
+  "adventConfig": {
+    "year": "2018",
+    "nameTemplate": "d18_{{num}}.js",
+    "templateFile": "js_template.js"
+  }
+}

@@ -62,6 +62,45 @@
                 "isDefault": true
             },
             "problemMatcher": []
+        },
+        {
+            "label": "js: init",
+            "type": "shell",
+            "command": "yarn",
+            "args": [
+                "run",
+                "advent",
+                "init",
+                "${input:day}"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "js: run",
+            "type": "shell",
+            "command": "yarn",
+            "args": [
+                "run",
+                "advent",
+                "run",
+                "${input:day}",
+                "${input:part}",
+                "+"
+            ],
+            "problemMatcher": []
+        }
+    ],
+    "inputs": [
+        {
+            "id": "day",
+            "description": "Advent of Code Day",
+            "type": "promptString"
+        },
+        {
+            "id": "part",
+            "description": "Advent of Code Part",
+            "default": "1",
+            "type": "promptString"
         }
     ]
 }
