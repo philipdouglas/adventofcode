@@ -22,8 +22,26 @@ const part1 = input => {
 // Part 2
 // ======
 
+function find_repeat(shifts) {
+  const seen_values = new Set([0]);
+  let current_value = 0;
+  while (true) {
+    for (const shift of shifts) {
+      current_value += shift;
+      if (seen_values.has(current_value)) {
+        return current_value;
+      }
+      seen_values.add(current_value);
+    }
+  }
+}
+
 const part2 = input => {
-  return input;
+  assert(find_repeat([1, -1]) === 0);
+  assert(find_repeat([+3, +3, +4, -2, -4]) == 10);
+  assert(find_repeat([-6, +3, +8, +5, -6]) == 5);
+  assert(find_repeat([+7, +7, -2, -7, -4]) == 14);
+  return find_repeat(parseInput(input));
 }
 
 module.exports = { part1, part2 }
