@@ -1,9 +1,9 @@
 "use strict";
 const assert = require("assert").strict;
 
-function parseInput(input) {
+const parse_input = input => {
   return input.split("\n");
-}
+};
 
 // Part 1
 // ======
