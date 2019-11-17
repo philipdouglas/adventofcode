@@ -3,7 +3,6 @@ import sequtils
 import strformat
 import strscans
 import strutils
-import sugar
 from unittest import check
 
 import aoc
@@ -19,33 +18,23 @@ proc parse(line: string): Coord4 =
 let input = input(day=25, year=2018).split("\n").map(parse)
 
 
-proc constellations(stars: seq[Coord4], debug: bool=false): int =
-    var 
-        stars = stars
-        groups: seq[seq[Coord4]]
-    while stars.len > 0:
-        let star = stars.pop()
-        # if groups.len == 0:
-        #     groups.add(@[star])
-        #     continue
+proc constellations(stars: seq[Coord4]): int =
+    var groups: seq[seq[Coord4]]
+    for star in stars:
         var matches: seq[int]
         for i, group in groups:
             for other in group:
                 if star.manhattenDist(other) <= 3:
                     matches.add(i)
                     break
-        if matches.len > 1:
-            for match in matches.reversed():
-                if match == matches[0]:
-                    break
-                groups[matches[0]].add(groups[match])
-                groups.delete(match)
-        elif matches.len == 0:
+        # if matches.len > 1:
+        for match in matches[1..^1]:
+            groups[matches[0]].add(groups[match])
+            groups.delete(match)
+        if matches.len == 0:
             groups.add(@[star])
-            if debug: pause($groups)
             continue
         groups[matches[0]].add(star)
-        if debug: pause($groups)
     return groups.len
 
 
