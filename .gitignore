@@ -9,3 +9,5 @@ __pycache__/
 *.pyc
 .aoc_session
 node_modules
+*.hi
+*.o
