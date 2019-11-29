@@ -1,0 +1,23 @@
+from itertools import repeat
+
+with open('.cache/input_2018_01.txt') as input_file:
+    lines = input_file.readlines()
+
+def part1(changes):
+    return changes |> sum
+
+def check(seen, [freq] :: rest):
+    print(f"{seen} <- {freq}")
+    match freq in seen:
+        return freq
+    else:
+        seen.add(freq)
+        return check(seen, rest)
+
+def part2(changes):
+    changes |> repeat |> scan$(+) |> check$(set())
+
+changes = lines |> map$(int)
+
+changes |> part1 |> print
+changes |> part2 |> print
