@@ -1,0 +1,31 @@
+{
+	"AOC": {
+		"prefix": "aoc",
+		"body": [
+"from aocd.models import Puzzle",
+"",
+"",
+"def part1(boxes):",
+"    \"\"\"",
+"    >>> part1($0)",
+"",
+"    \"\"\"",
+"",
+"",
+"# def part2(boxes):",
+"#     \"\"\"",
+"#     >>> part2()",
+"#     \"\"\"",
+"",
+"",
+"if __name__ == \"__main__\":",
+"    import doctest",
+"    doctest.testmod()",
+"",
+"    puzzle = Puzzle(year=2019, day=${1:day})",
+"    boxes = puzzle.input_data.split('\\n')",
+"    # puzzle.answer_a = part1(boxes)",
+"    # puzzle.answer_b = part2(boxes)",
+		]
+	}
+}
