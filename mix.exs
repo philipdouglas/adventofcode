@@ -14,7 +14,8 @@ defmodule AOC.Mixfile do
     [
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"},
-      {:advent_of_code_helper, "~> 0.1.0"},
+      # {:advent_of_code_helper, github: "FreakyDug/Advent-Of-Code", branch: "master"},
+      {:advent_of_code_helper, path: "../Advent-Of-Code"},
       {:exprof, "~> 0.2.0"},
       {:tensor, "~> 2.0"},
       {:xxhash, "~> 0.2.1"},
