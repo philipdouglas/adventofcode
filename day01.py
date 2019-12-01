@@ -16,27 +16,24 @@ def fuel_required(mass):
 
 
 def part1(modules):
-    return sum(map(fuel_required, modules))
+    return sum(fuel_required(module) for module in modules)
 
 
-def fuel_required_extended(mass):
+def fuel_gen(mass):
     """
-    >>> fuel_required_extended(14)
+    >>> sum(list(fuel_gen(14)))
     2
-    >>> fuel_required_extended(1969)
+    >>> sum(list(fuel_gen(1969)))
     966
-    >>> fuel_required_extended(100756)
+    >>> sum(list(fuel_gen(100756)))
     50346
     """
-    total = 0
-    while (fuel := fuel_required(mass)) >= 0:
-        total += fuel
-        mass = fuel
-    return total
+    while (mass := fuel_required(mass)) > 0:
+        yield mass
 
 
 def part2(modules):
-    return sum(map(fuel_required_extended, modules))
+    return sum(mass for module in modules for mass in fuel_gen(module))
 
 
 if __name__ == "__main__":

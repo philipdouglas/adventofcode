@@ -13,3 +13,4 @@ node_modules
 *.o
 env/
 .mypy_cache
+.config/aocd/token
