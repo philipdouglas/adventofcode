@@ -1,5 +1,7 @@
 from aocd.models import Puzzle
 
+from util import inspect
+
 
 def fuel_required(mass):
     """
@@ -42,5 +44,5 @@ if __name__ == "__main__":
 
     puzzle = Puzzle(year=2019, day=1)
     modules = [int(module) for module in puzzle.input_data.split('\n')]
-    puzzle.answer_a = part1(modules)
-    puzzle.answer_b = part2(modules)
+    puzzle.answer_a = inspect(part1(modules), prefix='Part 1: ')
+    puzzle.answer_b = inspect(part2(modules), prefix='Part 2: ')
