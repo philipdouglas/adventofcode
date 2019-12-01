@@ -35,7 +35,7 @@ def fuel_gen(mass):
 
 
 def part2(modules):
-    return sum(mass for module in modules for mass in fuel_gen(module))
+    return sum(sum(fuel_gen(module)) for module in modules)
 
 
 if __name__ == "__main__":
