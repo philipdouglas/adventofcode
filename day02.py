@@ -1,7 +1,7 @@
-import copy
 import dataclasses
 import itertools
-from operator import add, mul
+import operator
+from typing import List
 
 from aocd.models import Puzzle
 
@@ -15,60 +15,63 @@ class Halt(Exception):
 @dataclasses.dataclass()
 class Computer:
     """
-    >>> Computer([1, 9, 10, 3, 2, 3, 11, 0, 99, 30, 40, 50]).run()
+    >>> Computer([1, 9, 10, 3, 2, 3, 11, 0, 99, 30, 40, 50]).run().mem
     [3500, 9, 10, 70, 2, 3, 11, 0, 99, 30, 40, 50]
-    >>> Computer([1, 0, 0, 0, 99]).run()
+    >>> Computer([1, 0, 0, 0, 99]).run().mem
     [2, 0, 0, 0, 99]
-    >>> Computer([2, 3, 0, 3, 99]).run()
+    >>> Computer([2, 3, 0, 3, 99]).run().mem
     [2, 3, 0, 6, 99]
-    >>> Computer([2, 4, 4, 5, 99, 0]).run()
+    >>> Computer([2, 4, 4, 5, 99, 0]).run().mem
     [2, 4, 4, 5, 99, 9801]
-    >>> Computer([1, 1, 1, 4, 99, 5, 6, 0, 99]).run()
+    >>> Computer([1, 1, 1, 4, 99, 5, 6, 0, 99]).run().mem
     [30, 1, 1, 4, 2, 5, 6, 0, 99]
     """
-    mem: list
+    mem: List[int]
     pc: int = 0
 
-    def run(self):
-        try:
-            while True:
-                self.execute()
-        except Halt:
-            return self.mem
+    _opcodes = {
+        1: operator.add,
+        2: operator.mul,
+    }
 
-    def execute(self):
-        opcode = self.mem[self.pc]
-        if opcode == 99:
-            raise Halt()
-        elif opcode == 1:
-            op = add
-        elif opcode == 2:
-            op = mul
-        else:
-            raise Exception(f"Unrecognised opcode {opcode} at pc {self.pc}")
-        input1, input2, output = self.mem[self.pc + 1:self.pc + 4]
-        val1 = self.mem[input1]
-        val2 = self.mem[input2]
-        self.mem[output] = op(val1, val2)
-        self.pc += 4
+    def __post_init__(self):
+        self.mem = self.mem.copy()
+
+    def run(self, noun=None, verb=None):
+        if noun is not None:
+            self[1] = noun
+        if verb is not None:
+            self[2] = verb
+
+        while (opcode := self.mem[self.pc]) != 99:
+            try:
+                op = self._opcodes[opcode]
+            except KeyError:
+                raise Exception(f"Unknown opcode {opcode} at pc {self.pc}")
+            input1, input2, output = self.mem[self.pc + 1:self.pc + 4]
+            self[output] = op(self[input1], self[input2])
+            self.pc += 4
+        return self
+
+    def __getitem__(self, key):
+        return self.mem[key]
+
+    def __setitem__(self, key, value):
+        self.mem[key] = value
+
+    @property
+    def output(self):
+        return self[0]
 
 
 def part1(state):
-    comp = Computer(state)
-    comp.run()
-    return comp.mem[0]
+    return Computer(state).run(12, 2).output
 
 
 def part2(state):
     TARGET = 19690720
-    for noun, verb in itertools.product(range(100), range(100)):
-        new_state = copy.copy(state)
-        new_state[1] = noun
-        new_state[2] = verb
-        comp = Computer(new_state)
-        comp.run()
-        # print(f"{noun}, {verb}: {comp.mem[0]}")
-        if comp.mem[0] == TARGET:
+    for noun, verb in itertools.product(range(100), repeat=2):
+        if Computer(state).run(noun, verb).output == TARGET:
             return 100 * noun + verb
 
 
@@ -77,9 +80,6 @@ if __name__ == "__main__":
     doctest.testmod()
 
     puzzle = Puzzle(year=2019, day=2)
-    start_state = [int(val) for val in puzzle.input_data.split(',')]
-    state_1 = copy.copy(start_state)
-    state_1[1] = 12
-    state_1[2] = 2
-    puzzle.answer_a = inspect(part1(state_1), prefix='Part 1: ')
-    puzzle.answer_b = inspect(part2(start_state), prefix='Part 2: ')
+    state = [int(val) for val in puzzle.input_data.split(',')]
+    puzzle.answer_a = inspect(part1(state), prefix='Part 1: ')
+    puzzle.answer_b = inspect(part2(state), prefix='Part 2: ')
