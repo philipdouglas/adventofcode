@@ -72,20 +72,31 @@ class Coord:
         """
         return self.__class__(self.y, -self.x)
 
+    def up(self):
+        return self.__class__(self.x, self.y + 1)
 
-class BlockCoord(Coord):
-    def distance_blocks(self, start=Coord(0, 0)):
+    def down(self):
+        return self.__class__(self.x, self.y - 1)
+
+    def left(self):
+        return self.__class__(self.x - 1, self.y)
+
+    def right(self):
+        return self.__class__(self.x + 1, self.y)
+
+    def manhatten_dist(self, start=None):
         """
         >>> c = BlockCoord(2, 3)
-        >>> c.distance_blocks()
+        >>> c.manhatten_dist()
         5
         >>> c = BlockCoord(0, -2)
-        >>> c.distance_blocks()
+        >>> c.manhatten_dist()
         2
         >>> c = BlockCoord(0, -2)
-        >>> c.distance_blocks(Coord(1, 2))
+        >>> c.manhatten_dist(Coord(1, 2))
         5
         """
+        start = start or Coord(0, 0)
         return abs(self.x - start.x) + abs(self.y - start.y)
 
 
