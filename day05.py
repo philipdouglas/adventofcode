@@ -26,6 +26,10 @@ class Computer:
     [30, 1, 1, 4, 2, 5, 6, 0, 99]
     >>> Computer([3,0,4,0,99]).run().output
     1
+    >>> Computer([3,9,8,9,10,9,4,9,99,-1,8]).run(inp=8).output
+    1
+    >>> Computer([3,9,8,9,10,9,4,9,99,-1,8]).run(inp=5).output
+    0
     """
     mem: List[int]
     pc: int = 0
@@ -39,8 +43,22 @@ class Computer:
     def store(self, dest):
         self.write(self._input, *dest)
 
-    def print(self, param):
+    def out(self, param):
         self._output = self.read(*param)
+
+    def jump_if_true(self, param1, param2):
+        if self.read(*param1):
+            self.pc = self.read(*param2)
+
+    def jump_if_false(self, param1, param2):
+        if not self.read(*param1):
+            self.pc = self.read(*param2)
+
+    def less_than(self, param1, param2, dest):
+        self.write(1 if self.read(*param1) < self.read(*param2) else 0, *dest)
+
+    def equals(self, param1, param2, dest):
+        self.write(1 if self.read(*param1) == self.read(*param2) else 0, *dest)
 
     _input = 1
     _output = None
@@ -49,7 +67,11 @@ class Computer:
         1: (add, 4),
         2: (mul, 4),
         3: (store, 2),
-        4: (print, 2),
+        4: (out, 2),
+        5: (jump_if_true, 3),
+        6: (jump_if_false, 3),
+        7: (less_than, 4),
+        8: (equals, 4),
     }
 
     def __post_init__(self):
@@ -77,11 +99,13 @@ class Computer:
         else:
             raise Exception(f"Unknown mode: {mode}")
 
-    def run(self, noun=None, verb=None):
+    def run(self, noun=None, verb=None, inp=None):
         if noun is not None:
             self[1] = noun
         if verb is not None:
             self[2] = verb
+        if inp is not None:
+            self._input = inp
 
         last_op = None
 
@@ -95,8 +119,10 @@ class Computer:
             except KeyError:
                 raise Exception(f"Unknown opcode {opcode} at pc {self.pc}")
             params = zip(self.mem[self.pc + 1:self.pc + param_num], modes)
+            pc_before = self.pc
             op(self, *params)
-            self.pc += param_num
+            if pc_before == self.pc:
+                self.pc += param_num
         return self
 
     def __getitem__(self, key):
@@ -116,11 +142,8 @@ def part1(program):
     return Computer(program).run().output
 
 
-# def part2(lines):
-#     """
-#     >>> part2()
-#
-#     """
+def part2(program):
+    return Computer(program).run(inp=5).output
 
 
 if __name__ == "__main__":
@@ -130,4 +153,4 @@ if __name__ == "__main__":
     puzzle = Puzzle(year=2019, day=5)
     program = [int(val) for val in puzzle.input_data.split(',')]
     puzzle.answer_a = inspect(part1(program), prefix='Part 1: ')
-    # puzzle.answer_b = inspect(part2(program), prefix='Part 2: ')
+    puzzle.answer_b = inspect(part2(program), prefix='Part 2: ')
