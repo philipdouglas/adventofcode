@@ -1,4 +1,6 @@
 import dataclasses
+from functools import lru_cache
+from inspect import signature
 from typing import List
 
 
@@ -52,53 +54,58 @@ class Computer:
     >>> Computer([3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99]).run(inp=9).output
     1001
     """
+    HALT = 99
+
     mem: List[int]
     pc: int = 0
 
     def add(self, param1, param2, dest):
-        self.write(self.read(*param1) + self.read(*param2), *dest)
+        dest.write(param1.read() + param2.read())
 
     def mul(self, param1, param2, dest):
-        self.write(self.read(*param1) * self.read(*param2), *dest)
+        dest.write(param1.read() * param2.read())
 
     def store(self, dest):
-        self.write(self._input, *dest)
+        dest.write(self._input)
 
     def out(self, param):
-        self._output = self.read(*param)
+        self._output = param.read()
 
     def jump_if_true(self, param1, param2):
-        if self.read(*param1):
-            self.pc = self.read(*param2)
+        if param1.read() != 0:
+            self.pc = param2.read()
 
     def jump_if_false(self, param1, param2):
-        if not self.read(*param1):
-            self.pc = self.read(*param2)
+        if param1.read() == 0:
+            self.pc = param2.read()
 
     def less_than(self, param1, param2, dest):
-        self.write(1 if self.read(*param1) < self.read(*param2) else 0, *dest)
+        dest.write(1 if param1.read() < param2.read() else 0)
 
     def equals(self, param1, param2, dest):
-        self.write(1 if self.read(*param1) == self.read(*param2) else 0, *dest)
+        dest.write(1 if param1.read() == param2.read() else 0)
 
     _input = 1
     _output = None
 
-    _opcodes = {
-        1: (add, 4),
-        2: (mul, 4),
-        3: (store, 2),
-        4: (out, 2),
-        5: (jump_if_true, 3),
-        6: (jump_if_false, 3),
-        7: (less_than, 4),
-        8: (equals, 4),
-    }
+    _opcode_functions = (
+        add,
+        mul,
+        store,
+        out,
+        jump_if_true,
+        jump_if_false,
+        less_than,
+        equals,
+    )
+    _opcodes = {index + 1: (func, len(signature(func).parameters))
+                for index, func in enumerate(_opcode_functions)}
 
     def __post_init__(self):
         self.mem = self.mem.copy()
 
     @staticmethod
+    @lru_cache
     def parse_op(opcode):
         """
         >>> Computer.parse_op(1002)
@@ -108,53 +115,51 @@ class Computer:
         op = int(bits[-2:])
         return (op, tuple(int(mode) for mode in reversed(bits[0:3])))
 
-    def write(self, value, param, mode):
-        assert mode == 0
-        self[param] = value
-
-    def read(self, param, mode):
-        if mode == 0:
-            return self[param]
-        elif mode == 1:
-            return param
-        else:
-            raise Exception(f"Unknown mode: {mode}")
-
     def run(self, noun=None, verb=None, inp=None):
         if noun is not None:
-            self[1] = noun
+            self.mem[1] = noun
         if verb is not None:
-            self[2] = verb
+            self.mem[2] = verb
         if inp is not None:
             self._input = inp
 
-        last_op = None
-
-        while (opcode := self.mem[self.pc]) != 99:
+        while (opcode := self.mem[self.pc]) != Computer.HALT:
             op, modes = self.parse_op(opcode)
-            last_op = op
             try:
                 op, param_num = self._opcodes[op]
             except KeyError:
                 raise Exception(f"Unknown opcode {opcode} at pc {self.pc}")
             params = zip(self.mem[self.pc + 1:self.pc + param_num], modes)
+            params = [Param(self, value, mode) for value, mode in params]
             pc_before = self.pc
             op(self, *params)
             if pc_before == self.pc:
                 self.pc += param_num
         return self
 
-    def __getitem__(self, key):
-        return self.mem[key]
-
-    def __setitem__(self, key, value):
-        self.mem[key] = value
-
     @property
     def output(self):
         if self._output is not None:
             return self._output
-        return self[0]
+        return self.mem[0]
+
+
+@dataclasses.dataclass()
+class Param:
+    computer: Computer
+    value: int
+    mode: int = 0
+
+    def read(self):
+        if self.mode == 0:
+            return self.computer.mem[self.value]
+        elif self.mode == 1:
+            return self.value
+        else:
+            raise Exception(f"Unknown mode: {self.mode}")
+
+    def write(self, value):
+        self.computer.mem[self.value] = value
 
 
 if __name__ == "__main__":
