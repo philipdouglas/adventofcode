@@ -5,12 +5,20 @@ from aocd.models import Puzzle
 from util import inspect
 
 
-def build_map(orbits):
+def build_routes(orbits):
     orbit_map = {}
     for orbit in orbits:
         left, right = orbit.split(')')
         orbit_map.setdefault(left, []).append(right)
-    return orbit_map
+
+    stack = ['COM']
+    routes = {'COM': []}
+    while stack:
+        current = stack.pop()
+        for child in orbit_map.get(current, []):
+            routes[child] = routes[current] + [current]
+            stack.append(child)
+    return routes
 
 
 def part1(orbits):
@@ -18,16 +26,8 @@ def part1(orbits):
     >>> part1(["COM)B", "B)C", "C)D", "D)E", "E)F", "B)G", "G)H", "D)I", "E)J", "J)K", "K)L"])
     42
     """
-    orbit_map = build_map(orbits)
-
-    stack = [('COM', 0)]
-    total = 0
-    while stack:
-        current, depth = stack.pop()
-        total += depth
-        for child in orbit_map.get(current, []):
-            stack.append((child, depth + 1))
-    return total
+    routes = build_routes(orbits)
+    return sum([len(route) for route in routes.values()])
 
 
 def part2(orbits):
@@ -35,20 +35,7 @@ def part2(orbits):
     >>> part2(["COM)B", "B)C", "C)D", "D)E", "E)F", "B)G", "G)H", "D)I", "E)J", "J)K", "K)L", "K)YOU", "I)SAN"])
     4
     """
-    orbit_map = build_map(orbits)
-
-    stack = [('COM')]
-    routes = {
-        'COM': []
-    }
-    while stack:
-        current = stack.pop()
-        for child in orbit_map.get(current, []):
-            routes[child] = routes[current] + [current]
-            stack.append(child)
-
-    # return len([None for left, right in zip_longest(routes['YOU'], routes['SAN'])
-    #             if left != right])
+    routes = build_routes(orbits)
     return len(set(routes['YOU']) ^ set(routes['SAN']))
 
 
