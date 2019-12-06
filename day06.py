@@ -39,7 +39,6 @@ def part2(orbits):
     return len(set(routes['YOU']) ^ set(routes['SAN']))
 
 
-
 if __name__ == "__main__":
     import doctest
     doctest.testmod()
