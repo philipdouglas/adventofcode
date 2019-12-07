@@ -4,6 +4,10 @@ from inspect import signature
 from typing import List
 
 
+class Pause(Exception):
+    pass
+
+
 @dataclasses.dataclass()
 class Computer:
     """
@@ -62,13 +66,18 @@ class Computer:
         dest.write(param1.read() * param2.read())
 
     def store(self, dest):
-        if len(self._input) > 1:
+        if self.pause:
             dest.write(self._input.pop(0))
         else:
-            dest.write(self._input[0])
+            if len(self._input) > 1:
+                dest.write(self._input.pop(0))
+            else:
+                dest.write(self._input[0])
 
     def out(self, param):
         self._output = param.read()
+        if self.pause:
+            raise Pause()
 
     def jump_if_true(self, param1, param2):
         if param1.read() != 0:
@@ -86,6 +95,7 @@ class Computer:
 
     _input = [1]
     _output = None
+    halted = False
 
     _opcode_functions = (
         add,
@@ -114,7 +124,9 @@ class Computer:
         op = int(bits[-2:])
         return (op, tuple(int(mode) for mode in reversed(bits[0:3])))
 
-    def run(self, noun=None, verb=None, inp=None):
+    def run(self, noun=None, verb=None, inp=None, pause=False):
+        if self.halted:
+            raise Exception("This computer has already halted!")
         if noun is not None:
             self.mem[1] = noun
         if verb is not None:
@@ -124,6 +136,7 @@ class Computer:
                 self._input = list(inp)
             except TypeError:
                 self._input = [inp]
+        self.pause = pause
 
         while (opcode := self.mem[self.pc]) != Computer.HALT:
             op, modes = self.parse_op(opcode)
@@ -134,9 +147,12 @@ class Computer:
             params = zip(self.mem[self.pc + 1:self.pc + param_num], modes)
             params = [Param(self, value, mode) for value, mode in params]
             pc_before = self.pc
-            op(self, *params)
-            if pc_before == self.pc:
-                self.pc += param_num
+            try:
+                op(self, *params)
+            finally:
+                if pc_before == self.pc:
+                    self.pc += param_num
+        self.halted = True
         return self
 
     @property

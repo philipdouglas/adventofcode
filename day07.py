@@ -2,7 +2,7 @@ import itertools
 
 from aocd.models import Puzzle
 
-from computer import Computer
+from computer import Computer, Pause
 from util import inspect
 
 
@@ -26,11 +26,30 @@ def part1(program):
             max_signal = out_signal
     return max_signal
 
-# def part2(program):
-#     """
-#     >>> part2()
-#
-#     """
+
+def part2(program):
+    """
+    >>> part2([3,26,1001,26,-4,26,3,27,1002,27,2,27,1,27,26,27,4,27,1001,28,-1,28,1005,28,6,99,0,0,5])
+    139629729
+    >>> part2([3,52,1001,52,-5,52,3,53,1,52,56,54,1007,54,5,55,1005,55,26,1001,54,-5,54,1105,1,12,1,53,54,53,1008,54,0,55,1001,55,1,55,2,53,55,53,4,53,1001,56,-1,56,1005,56,6,99,0,0,0,0,10])
+    18216
+    """
+    max_signal = 0
+    for permutation in itertools.permutations(range(5, 10)):
+        amplifiers = [Computer(program) for _ in permutation]
+        for amp, phase in zip(amplifiers, permutation):
+            amp._input = [phase]
+        prev_output = 0
+        for amp in itertools.cycle(amplifiers):
+            if amp.halted:
+                max_signal = max(max_signal, prev_output)
+                break
+            amp._input.append(prev_output)
+            try:
+                amp.run(pause=True)
+            except Pause:
+                prev_output = amp.output
+    return max_signal
 
 
 if __name__ == "__main__":
@@ -40,4 +59,4 @@ if __name__ == "__main__":
     puzzle = Puzzle(year=2019, day=7)
     program = [int(val) for val in puzzle.input_data.split(',')]
     puzzle.answer_a = inspect(part1(program), prefix='Part 1: ')
-    # puzzle.answer_b = inspect(part2(program), prefix='Part 2: ')
+    puzzle.answer_b = inspect(part2(program), prefix='Part 2: ')
