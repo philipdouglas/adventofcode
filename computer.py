@@ -4,10 +4,6 @@ from inspect import signature
 from typing import List
 
 
-class Halt(Exception):
-    pass
-
-
 @dataclasses.dataclass()
 class Computer:
     """
@@ -66,7 +62,10 @@ class Computer:
         dest.write(param1.read() * param2.read())
 
     def store(self, dest):
-        dest.write(self._input)
+        if len(self._input) > 1:
+            dest.write(self._input.pop(0))
+        else:
+            dest.write(self._input[0])
 
     def out(self, param):
         self._output = param.read()
@@ -85,7 +84,7 @@ class Computer:
     def equals(self, param1, param2, dest):
         dest.write(1 if param1.read() == param2.read() else 0)
 
-    _input = 1
+    _input = [1]
     _output = None
 
     _opcode_functions = (
@@ -121,7 +120,10 @@ class Computer:
         if verb is not None:
             self.mem[2] = verb
         if inp is not None:
-            self._input = inp
+            try:
+                self._input = list(inp)
+            except TypeError:
+                self._input = [inp]
 
         while (opcode := self.mem[self.pc]) != Computer.HALT:
             op, modes = self.parse_op(opcode)
