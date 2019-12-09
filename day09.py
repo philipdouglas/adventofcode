@@ -11,11 +11,8 @@ def part1(program):
     return result
 
 
-# def part2(program):
-#     """
-#     >>> part2()
-#
-#     """
+def part2(program):
+    return Computer(program).run(inp=2).output
 
 
 if __name__ == "__main__":
@@ -25,4 +22,4 @@ if __name__ == "__main__":
     puzzle = Puzzle(year=2019, day=9)
     program = [int(val) for val in puzzle.input_data.split(',')]
     puzzle.answer_a = inspect(part1(program), prefix='Part 1: ')
-    # puzzle.answer_b = inspect(part2(program), prefix='Part 2: ')
+    puzzle.answer_b = inspect(part2(program), prefix='Part 2: ')
