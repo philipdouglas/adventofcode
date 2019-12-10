@@ -64,13 +64,14 @@ def test_asteroid(asteroid, others):
     for other in others:
         if other != asteroid and blocked_by(asteroid, other):
             count += 1
+    # print(f"{asteroid + Coord(8, 3)}: {count}")
     return count
 
 
 def part1(asteroids):
     """
     >>> part1([".#..#", ".....", "#####", "....#", "...##"])
-    ((3, 4), 8)
+    8
     """
     asteroids = parse_asteroids(asteroids)
     results = Counter()
@@ -81,16 +82,20 @@ def part1(asteroids):
             if test_asteroid(checking, relative_positions) == 0:
                 can_see += 1
         results[asteroid] = can_see
-    return results.most_common(1)[0]
+    print(results.most_common(1)[0])
+    return results.most_common(1)[0][1]
 
-def part2(asteroids):
+
+def part2(asteroids, target=200, station=Coord(11, 13)):
+    """
+    >>> part2([".#....#####...#..", "##...##.#####..##", "##...#...#.#####.", "..#.....X...###..", "..#.#.....#....##"], 2, station=Coord(8, 3))
+    900
+    """
     asteroids = parse_asteroids(asteroids)
-    station = Coord(11, 13)
-    asteroids = [other - station for other in asteroids if other != station]
-    asteroids.sort(key=lambda asteroid: test_asteroid(asteroid, asteroids))
-    asteroids.sort(key=lambda asteroid: asteroid.angle_to())
-    # inspect(asteroids)
-    result = asteroids[200] + station
+    destroyed = asteroids = [other - station for other in asteroids if other != station]
+    destroyed = sorted(destroyed, key=lambda asteroid: (test_asteroid(asteroid, asteroids), (360 - asteroid.angle_to(Coord(0, -1))) % 360))
+    print([(c + station, 360-c.angle_to(Coord(0, -1)), ) for c in destroyed])
+    result = destroyed[target - 1] + station
     return result.x * 100 + result.y
 
 
@@ -100,5 +105,6 @@ if __name__ == "__main__":
 
     puzzle = Puzzle(year=2019, day=10)
     asteroids = puzzle.input_data.split('\n')
+    print(asteroids)
     # puzzle.answer_a = inspect(part1(asteroids), prefix='Part 1: ')
-    puzzle.answer_b = inspect(part2(asteroids), prefix='Part 2: ')
+    puzzle.answer_b = inspect(part2(asteroids, target=200), prefix='Part 2: ')

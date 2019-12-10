@@ -2,7 +2,7 @@
 2019 refactor of my coord library from 2016
 """
 from dataclasses import dataclass
-from math import atan2, degrees, acos, sqrt
+from math import atan2, degrees, atan2, sqrt
 
 
 @dataclass(order=False, repr=False, frozen=True)
@@ -116,6 +116,9 @@ class Coord:
     def dotproduct(self, other):
         return self.x * other.x + self.y * other.y
 
+    def determinant(self, other):
+        return self.x * other.y - self.y * other.x
+
     def vector_length(self):
         return sqrt(self.dotproduct(self))
 
@@ -127,11 +130,19 @@ class Coord:
         270
         >>> Coord(0, -1).angle_to()
         180
+        >>> Coord(0, 1).angle_to()
+        0
+        >>> Coord(-2,-3).angle_to()
+        214
+        >>> Coord(-1,-3).angle_to()
+        199
         """
         if other is None:
             other = Coord(0, 1)
-        return int(degrees(
-            acos(self.dotproduct(other) / self.vector_length() * other.vector_length())))
+        result = degrees(atan2(self.determinant(other), self.dotproduct(other)))
+        if result < 0:
+            result = 360 + result
+        return result
 
 
 
