@@ -2,6 +2,7 @@
 2019 refactor of my coord library from 2016
 """
 from dataclasses import dataclass
+from math import atan2
 
 
 @dataclass(order=False, repr=False, frozen=True)
@@ -36,6 +37,9 @@ class Coord:
         """
         return self.__class__(self.x + other.x, self.y + other.y)
 
+    def __sub__(self, other):
+        return self.__class__(self.x - other.x, self.y - other.y)
+
     def __mul__(self, other):
         """
         >>> c1 = Coord(1, 4)
@@ -43,6 +47,12 @@ class Coord:
         (3, 12)
         """
         return self.__class__(self.x * other, self.y * other)
+
+    def __eq__(self, other):
+        return self.x == other.x and self.y == other.y
+
+    def __lt__(self, other):
+        return self.x < other.x and self.y < other.y
 
     def __str__(self):
         """
@@ -98,6 +108,10 @@ class Coord:
         """
         start = start or Coord(0, 0)
         return abs(self.x - start.x) + abs(self.y - start.y)
+
+    @property
+    def angle(self):
+        return atan2(self.y, self.x)
 
 
 @dataclass(order=False, repr=False, frozen=True)
