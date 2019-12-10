@@ -2,7 +2,7 @@
 2019 refactor of my coord library from 2016
 """
 from dataclasses import dataclass
-from math import atan2
+from math import atan2, degrees, acos, sqrt
 
 
 @dataclass(order=False, repr=False, frozen=True)
@@ -96,13 +96,13 @@ class Coord:
 
     def manhatten_dist(self, start=None):
         """
-        >>> c = BlockCoord(2, 3)
+        >>> c = Coord(2, 3)
         >>> c.manhatten_dist()
         5
-        >>> c = BlockCoord(0, -2)
+        >>> c = Coord(0, -2)
         >>> c.manhatten_dist()
         2
-        >>> c = BlockCoord(0, -2)
+        >>> c = Coord(0, -2)
         >>> c.manhatten_dist(Coord(1, 2))
         5
         """
@@ -112,6 +112,27 @@ class Coord:
     @property
     def angle(self):
         return atan2(self.y, self.x)
+
+    def dotproduct(self, other):
+        return self.x * other.x + self.y * other.y
+
+    def vector_length(self):
+        return sqrt(self.dotproduct(self))
+
+    def angle_to(self, other=None):
+        """
+        >>> Coord(1, 0).angle_to()
+        90
+        >>> Coord(-1, 0).angle_to()
+        270
+        >>> Coord(0, -1).angle_to()
+        180
+        """
+        if other is None:
+            other = Coord(0, 1)
+        return int(degrees(
+            acos(self.dotproduct(other) / self.vector_length() * other.vector_length())))
+
 
 
 @dataclass(order=False, repr=False, frozen=True)

@@ -55,6 +55,11 @@ def parse_asteroids(asteroids):
 
 
 def test_asteroid(asteroid, others):
+    """
+    >>> asteroids = parse_asteroids(["#.........", "...#......", "...#..#...", ".####....#", "..#.#.#...", ".....#....", "..###.#.##", ".......#..", "....#...#.", "...#..#..#"])
+    >>> test_asteroid(Coord(9, 9), asteroids)
+    6
+    """
     count = 0
     for other in others:
         if other != asteroid and blocked_by(asteroid, other):
@@ -79,13 +84,13 @@ def part1(asteroids):
     return results.most_common(1)[0]
 
 def part2(asteroids):
-    ninety_degs = radians(90)
     asteroids = parse_asteroids(asteroids)
     station = Coord(11, 13)
     asteroids = [other - station for other in asteroids if other != station]
     asteroids.sort(key=lambda asteroid: test_asteroid(asteroid, asteroids))
-    asteroids.sort(key=lambda asteroid: asteroid.angle - ninety_degs)
-    result = asteroids[200]
+    asteroids.sort(key=lambda asteroid: asteroid.angle_to())
+    # inspect(asteroids)
+    result = asteroids[200] + station
     return result.x * 100 + result.y
 
 
