@@ -1,4 +1,5 @@
 from collections import Counter
+from math import radians
 
 from aocd.models import Puzzle
 
@@ -54,10 +55,11 @@ def parse_asteroids(asteroids):
 
 
 def test_asteroid(asteroid, others):
+    count = 0
     for other in others:
         if other != asteroid and blocked_by(asteroid, other):
-            return False
-    return True
+            count += 1
+    return count
 
 
 def part1(asteroids):
@@ -71,16 +73,20 @@ def part1(asteroids):
         relative_positions = [other - asteroid for other in asteroids if other != asteroid]
         can_see = 0
         for checking in relative_positions:
-            if test_asteroid(checking, relative_positions):
+            if test_asteroid(checking, relative_positions) == 0:
                 can_see += 1
         results[asteroid] = can_see
     return results.most_common(1)[0]
 
-# def part2(asteroids):
-#     """
-#     >>> part2()
-#
-#     """
+def part2(asteroids):
+    ninety_degs = radians(90)
+    asteroids = parse_asteroids(asteroids)
+    station = Coord(11, 13)
+    asteroids = [other - station for other in asteroids if other != station]
+    asteroids.sort(key=lambda asteroid: test_asteroid(asteroid, asteroids))
+    asteroids.sort(key=lambda asteroid: asteroid.angle - ninety_degs)
+    result = asteroids[200]
+    return result.x * 100 + result.y
 
 
 if __name__ == "__main__":
@@ -89,5 +95,5 @@ if __name__ == "__main__":
 
     puzzle = Puzzle(year=2019, day=10)
     asteroids = puzzle.input_data.split('\n')
-    puzzle.answer_a = inspect(part1(asteroids), prefix='Part 1: ')
-    # puzzle.answer_b = inspect(part2(asteroids), prefix='Part 2: ')
+    # puzzle.answer_a = inspect(part1(asteroids), prefix='Part 1: ')
+    puzzle.answer_b = inspect(part2(asteroids), prefix='Part 2: ')
