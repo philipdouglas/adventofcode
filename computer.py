@@ -5,8 +5,6 @@ from inspect import signature
 from typing import List
 
 
-
-
 class Pause(Exception):
     pass
 
@@ -88,13 +86,7 @@ class Computer:
                 dest.write(self._input[0])
 
     def out(self, param):
-        if not self._output:
-            self._output = param.read()
-        else:
-            try:
-                self._output.append(param.read())
-            except AttributeError:
-                self._output = [self._output, param.read()]
+        self._output = param.read()
         if self.pause:
             raise Pause()
 
