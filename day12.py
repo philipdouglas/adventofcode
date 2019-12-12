@@ -68,12 +68,46 @@ def part1(moons, target_steps):
     return sum(moon.total_energy for moon in moons)
 
 
+@dataclasses.dataclass
+class Moon1:
+    pos: int
+    vel: int
 
-# def part2(moons):
-#     """
-#     >>> part2()
-#
-#     """
+
+def squash_moons(moons):
+    return '|'.join([str(moon) for moon in moons])
+
+
+def sim_1d(moons):
+    history = set()
+    steps = 0
+    while (rep := squash_moons(moons)) not in history:
+        history.add(rep)
+        print(f"{steps}: {rep}")
+        for moon_a, moon_b in itertools.permutations(moons, 2):
+            d = 0
+            if moon_a.pos < moon_b.pos:
+                d = 1
+            elif moon_a.pos > moon_b.pos:
+                d = -1
+            moon_a.vel += d
+        for moon in moons:
+            moon.pos = moon.pos + moon.vel
+        steps += 1
+    return steps
+
+
+def part2(moons):
+    """
+    # >>> part2(['<x=-1, y=0, z=2>', '<x=2, y=-10, z=-7>', '<x=4, y=-8, z=8>', '<x=3, y=5, z=-1>'])
+    # 2772
+    # >>> part2(['<x=-8, y=-10, z=0>', '<x=5, y=5, z=10>', '<x=2, y=-7, z=3>', '<x=9, y=-8, z=-3>'])
+    # 4686774924
+    """
+    moons = [parse(moon) for moon in moons]
+    x_repeat = sim_1d([Moon1(moon.pos.x, moon.pos.x) for moon in moons])
+    y_repeat = sim_1d([Moon1(moon.pos.y, moon.pos.y) for moon in moons])
+    z_repeat = sim_1d([Moon1(moon.pos.z, moon.pos.z) for moon in moons])
 
 
 if __name__ == "__main__":
@@ -83,4 +117,5 @@ if __name__ == "__main__":
     puzzle = Puzzle(year=2019, day=12)
     moons = puzzle.input_data.split('\n')
     puzzle.answer_a = inspect(part1(moons, 1000), prefix='Part 1: ')
+    inspect(part2(['<x=-1, y=0, z=2>', '<x=2, y=-10, z=-7>', '<x=4, y=-8, z=8>', '<x=3, y=5, z=-1>']))
     # puzzle.answer_b = inspect(part2(moons), prefix='Part 2: ')
