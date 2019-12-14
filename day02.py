@@ -7,13 +7,17 @@ from util import inspect
 
 
 def part1(state):
-    return Computer(state).run(12, 2).output
+    comp = Computer(state, mem_override={1: 12, 2: 2})
+    comp.run()
+    return comp.mem0
 
 
 def part2(state):
     TARGET = 19690720
     for noun, verb in itertools.product(range(100), repeat=2):
-        if Computer(state).run(noun, verb).output == TARGET:
+        comp = Computer(state, mem_override={1: noun, 2: verb})
+        comp.run()
+        if comp.mem0 == TARGET:
             return 100 * noun + verb
 
 

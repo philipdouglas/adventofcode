@@ -109,7 +109,6 @@ def part2(lines):
     return lower_bound
 
 
-
 if __name__ == "__main__":
     import doctest
     doctest.testmod()

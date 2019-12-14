@@ -5,11 +5,14 @@ from util import inspect
 
 
 def part1(program):
-    return Computer(program).run().output
+    comp = Computer(program, input=1)
+    while not comp.halted:
+        comp.run()
+    return comp.output
 
 
 def part2(program):
-    return Computer(program).run(inp=5).output
+    return Computer(program, input=5).run()
 
 
 if __name__ == "__main__":

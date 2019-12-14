@@ -1,10 +1,9 @@
 
 from collections import defaultdict
-from os.path import realpath
 
 from aocd.models import Puzzle
 
-from computer import Computer, Pause
+from computer import Computer, Halted
 from coord import Coord
 from util import inspect
 
@@ -17,24 +16,18 @@ def paint(program, start):
     computer._input = []
     hull[position] = start
 
-    while True:
-        computer._input.append(hull[position])
+    while not computer.halted:
         try:
-            computer.run(pause=True)
-            break
-        except Pause:
-            hull[position] = computer.output
-            try:
-                computer.run(pause=True)
-                break
-            except Pause:
-                turn = computer.output
-                if turn == 0:
-                    direction = direction.rotate_left()
-                else:
-                    direction = direction.rotate_right()
-                position = position + direction
-    return hull
+            computer.add_input(hull[position])
+            hull[position] = computer.run()
+            turn = computer.run()
+            if turn == 0:
+                direction = direction.rotate_left()
+            else:
+                direction = direction.rotate_right()
+            position = position + direction
+        except Halted:
+            return hull
 
 
 def part1(program):
@@ -58,7 +51,6 @@ def part2(program):
                 row.append(' ')
         visualisation.append(''.join(row))
     return input('Hull:\n' + '\n'.join(visualisation))
-
 
 
 if __name__ == "__main__":

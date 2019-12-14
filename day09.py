@@ -5,14 +5,14 @@ from util import inspect
 
 
 def part1(program):
-    result = Computer(program).run(inp=1).output
+    result = Computer(program, input=1).run()
     if isinstance(result, list):
         raise Exception(f"Opcode errors: {result}")
     return result
 
 
 def part2(program):
-    return Computer(program).run(inp=2).output
+    return Computer(program, input=2).run()
 
 
 if __name__ == "__main__":

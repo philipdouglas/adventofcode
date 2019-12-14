@@ -2,7 +2,7 @@ import itertools
 
 from aocd.models import Puzzle
 
-from computer import Computer, Pause
+from computer import Computer
 from util import inspect
 
 
@@ -19,9 +19,7 @@ def part1(program):
     for permutation in itertools.permutations(range(0, 5)):
         out_signal = 0
         for in_signal in permutation:
-            out_signal = Computer(program).run(
-                inp=[in_signal, out_signal]
-            ).output
+            out_signal = Computer(program, input=[in_signal, out_signal]).run()
         if out_signal > max_signal:
             max_signal = out_signal
     return max_signal
@@ -36,19 +34,14 @@ def part2(program):
     """
     max_signal = 0
     for permutation in itertools.permutations(range(5, 10)):
-        amplifiers = [Computer(program) for _ in permutation]
-        for amp, phase in zip(amplifiers, permutation):
-            amp._input = [phase]
+        amplifiers = [Computer(program, input=[phase]) for phase in permutation]
         prev_output = 0
         for amp in itertools.cycle(amplifiers):
             if amp.halted:
                 max_signal = max(max_signal, prev_output)
                 break
-            amp._input.append(prev_output)
-            try:
-                amp.run(pause=True)
-            except Pause:
-                prev_output = amp.output
+            amp.add_input(prev_output)
+            prev_output = amp.run()
     return max_signal
 
 

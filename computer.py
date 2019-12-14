@@ -9,70 +9,80 @@ class Pause(Exception):
     pass
 
 
-class InputRequired(Exception):
+class Halted(Exception):
     pass
 
 
 @dataclasses.dataclass()
 class Computer:
     """
-    >>> list(Computer([1, 2, 3])._mem.items())
-    [(0, 1), (1, 2), (2, 3)]
-    >>> Computer([1, 9, 10, 3, 2, 3, 11, 0, 99, 30, 40, 50]).run().get_mem()
+    >>> c1 = Computer([1, 9, 10, 3, 2, 3, 11, 0, 99, 30, 40, 50])
+    >>> c1.run()
+    >>> c1.get_mem()
     [3500, 9, 10, 70, 2, 3, 11, 0, 99, 30, 40, 50]
-    >>> Computer([1, 0, 0, 0, 99]).run().get_mem()
+    >>> c2 = Computer([1, 0, 0, 0, 99])
+    >>> c2.run()
+    >>> c2.get_mem()
     [2, 0, 0, 0, 99]
-    >>> Computer([2, 3, 0, 3, 99]).run().get_mem()
+    >>> c3 = Computer([2, 3, 0, 3, 99])
+    >>> c3.run()
+    >>> c3.get_mem()
     [2, 3, 0, 6, 99]
-    >>> Computer([2, 4, 4, 5, 99, 0]).run().get_mem()
+    >>> c4 = Computer([2, 4, 4, 5, 99, 0])
+    >>> c4.run()
+    >>> c4.get_mem()
     [2, 4, 4, 5, 99, 9801]
-    >>> Computer([1, 1, 1, 4, 99, 5, 6, 0, 99]).run().get_mem()
+    >>> c5 = Computer([1, 1, 1, 4, 99, 5, 6, 0, 99])
+    >>> c5.run()
+    >>> c5.get_mem()
     [30, 1, 1, 4, 2, 5, 6, 0, 99]
-    >>> Computer([3,0,4,0,99]).run().output
+    >>> Computer([3,0,4,0,99], input=7).run()
+    7
+    >>> Computer([3,9,8,9,10,9,4,9,99,-1,8], input=8).run()
     1
-    >>> Computer([3,9,8,9,10,9,4,9,99,-1,8]).run(inp=8).output
-    1
-    >>> Computer([3,9,8,9,10,9,4,9,99,-1,8]).run(inp=5).output
+    >>> Computer([3,9,8,9,10,9,4,9,99,-1,8], input=5).run()
     0
-    >>> Computer([3,9,7,9,10,9,4,9,99,-1,8]).run(inp=7).output
+    >>> Computer([3,9,7,9,10,9,4,9,99,-1,8], input=7).run()
     1
-    >>> Computer([3,9,7,9,10,9,4,9,99,-1,8]).run(inp=8).output
+    >>> Computer([3,9,7,9,10,9,4,9,99,-1,8], input=8).run()
     0
-    >>> Computer([3,3,1108,-1,8,3,4,3,99]).run(inp=8).output
+    >>> Computer([3,3,1108,-1,8,3,4,3,99], input=8).run()
     1
-    >>> Computer([3,3,1108,-1,8,3,4,3,99]).run(inp=1).output
+    >>> Computer([3,3,1108,-1,8,3,4,3,99], input=1).run()
     0
-    >>> Computer([3,3,1107,-1,8,3,4,3,99]).run(inp=7).output
+    >>> Computer([3,3,1107,-1,8,3,4,3,99], input=7).run()
     1
-    >>> Computer([3,3,1107,-1,8,3,4,3,99]).run(inp=9).output
+    >>> Computer([3,3,1107,-1,8,3,4,3,99], input=9).run()
     0
-    >>> Computer([3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9]).run(inp=0).output
+    >>> Computer([3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9], input=0).run()
     0
-    >>> Computer([3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9]).run(inp=1).output
+    >>> Computer([3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9], input=1).run()
     1
-    >>> Computer([3,3,1105,-1,9,1101,0,0,12,4,12,99,1]).run(inp=0).output
+    >>> Computer([3,3,1105,-1,9,1101,0,0,12,4,12,99,1], input=0).run()
     0
-    >>> Computer([3,3,1105,-1,9,1101,0,0,12,4,12,99,1]).run(inp=1).output
+    >>> Computer([3,3,1105,-1,9,1101,0,0,12,4,12,99,1], input=1).run()
     1
-    >>> Computer([3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99]).run(inp=7).output
+    >>> Computer([3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99], input=7).run()
     999
-    >>> Computer([3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99]).run(inp=8).output
+    >>> Computer([3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99], input=8).run()
     1000
-    >>> Computer([3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99]).run(inp=9).output
+    >>> Computer([3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99], input=9).run()
     1001
-    >>> Computer([109,1,204,-1,1001,100,1,100,1008,100,16,101,1006,101,0,99]).run().output
+    >>> c = Computer([109,1,204,-1,1001,100,1,100,1008,100,16,101,1006,101,0,99])
+    >>> c.run()
+    109
+    >>> c.get_mem()
     [109, 1, 204, -1, 1001, 100, 1, 100, 1008, 100, 16, 101, 1006, 101, 0, 99]
-    >>> Computer([1102,34915192,34915192,7,4,7,99,0]).run().output
+    >>> Computer([1102,34915192,34915192,7,4,7,99,0]).run()
     1219070632396864
-    >>> Computer([104,1125899906842624,99]).run().output
+    >>> Computer([104,1125899906842624,99]).run()
     1125899906842624
-    >>> Computer([9, 1, 203, 1, 99]).run(inp=5).get_mem()
+    >>> c6 = Computer([9, 1, 203, 1, 99], input=5)
+    >>> c6.run()
+    >>> c6.get_mem()
     [9, 1, 5, 1, 99]
     """
     HALT = 99
-
-    mem: List[int]
-    pc: int = 0
 
     def add(self, param1, param2, dest):
         dest.write(param1.read() + param2.read())
@@ -81,30 +91,30 @@ class Computer:
         dest.write(param1.read() * param2.read())
 
     def store(self, dest):
-        if self.input_func:
-            dest.write(self.input_func())
-            return
+        if self._input is None:
+            raise Exception("Input needed but none was provided")
 
-        if self.pause:
-            dest.write(self._input.pop(0))
-        else:
-            if len(self._input) > 1:
+        try:
+            dest.write(self._input())
+        except TypeError:
+            try:
                 dest.write(self._input.pop(0))
-            else:
-                dest.write(self._input[0])
+            except IndexError:
+                raise Exception("Input list empty")
+            except AttributeError:
+                dest.write(self._input)
 
     def out(self, param):
         self._output = param.read()
-        if self.pause:
-            raise Pause()
+        raise Pause()
 
     def jump_if_true(self, param1, param2):
         if param1.read() != 0:
-            self.pc = param2.read()
+            self._pc = param2.read()
 
     def jump_if_false(self, param1, param2):
         if param1.read() == 0:
-            self.pc = param2.read()
+            self._pc = param2.read()
 
     def less_than(self, param1, param2, dest):
         dest.write(1 if param1.read() < param2.read() else 0)
@@ -115,10 +125,10 @@ class Computer:
     def base(self, param):
         self._relative_base += param.read()
 
+    _pc = 0
     _mem = None
     _relative_base = 0
-    _input = [1]
-    input_func = None
+    _input = None
     _output = None
     halted = False
 
@@ -136,9 +146,14 @@ class Computer:
     _opcodes = {index + 1: (func, len(signature(func).parameters))
                 for index, func in enumerate(_opcode_functions)}
 
-    def __post_init__(self):
+    def __init__(self, program, mem_override=None, input=None):
         self._mem = collections.defaultdict(int)
-        self._mem.update({index: val for index, val in enumerate(self.mem)})
+        self._mem.update({index: val for index, val in enumerate(program)})
+
+        if mem_override:
+            self._mem.update(mem_override)
+
+        self._input = input
 
     @staticmethod
     @lru_cache
@@ -153,48 +168,45 @@ class Computer:
         op = int(bits[-2:])
         return (op, tuple(int(mode) for mode in reversed(bits[0:3])))
 
-    def set_mem(self, address, value):
-        self._mem[address] = value
-
-    def run(self, noun=None, verb=None, inp=None, pause=False):
+    def run(self):
         if self.halted:
-            raise Exception("This computer has already halted!")
-        if noun is not None:
-            self._mem[1] = noun
-        if verb is not None:
-            self._mem[2] = verb
-        if inp is not None:
-            try:
-                self._input = list(inp)
-            except TypeError:
-                self._input = [inp]
-        self.pause = pause
+            raise Halted()
 
-        while (opcode := self._mem[self.pc]) != Computer.HALT:
+        while (opcode := self._mem[self._pc]) != Computer.HALT:
             op, modes = self.parse_op(opcode)
             try:
                 op, param_num = self._opcodes[op]
             except KeyError:
-                raise Exception(f"Unknown opcode {opcode} at pc {self.pc}")
-            params = zip(list(self._mem.values())[self.pc + 1:self.pc + param_num], modes)
+                raise Exception(f"Unknown opcode {opcode} at pc {self._pc}")
+            params = zip(list(self._mem.values())[self._pc + 1:self._pc + param_num], modes)
             params = [Param(self, value, mode) for value, mode in params]
-            pc_before = self.pc
+            pc_before = self._pc
             try:
                 op(self, *params)
+            except Pause:
+                return self.output
             finally:
-                if pc_before == self.pc:
-                    self.pc += param_num
+                if pc_before == self._pc:
+                    self._pc += param_num
         self.halted = True
-        return self
+        return self.output
 
     @property
     def output(self):
-        if self._output is not None:
-            return self._output
-        return self._mem[0]
+        return self._output
 
     def get_mem(self):
         return list(self._mem.values())
+
+    @property
+    def mem0(self):
+        """
+        Used by early puzzles before output was added
+        """
+        return self._mem[0]
+
+    def add_input(self, value):
+        self._input.append(value)
 
 
 @dataclasses.dataclass()

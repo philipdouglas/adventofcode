@@ -1,6 +1,6 @@
 from aocd.models import Puzzle
 
-from computer import Computer, Pause, InputRequired
+from computer import Computer, Halted
 from coord import Coord
 from util import inspect
 
@@ -10,28 +10,13 @@ def part1(program):
     computer = Computer(program)
     while not computer.halted:
         try:
-            computer.run(pause=True)
-        except Pause:
+            x = computer.run()
+            y = computer.run()
+            pos = Coord(x, y)
+            tile_id = computer.run()
+            screen[pos] = tile_id
+        except Halted:
             pass
-        else:
-            break
-        x = computer.output
-        try:
-            computer.run(pause=True)
-        except Pause:
-            pass
-        else:
-            break
-        y = computer.output
-        pos = Coord(x, y)
-        try:
-            computer.run(pause=True)
-        except Pause:
-            pass
-        else:
-            break
-        tile_id = computer.output
-        screen[pos] = tile_id
     return len([tile for tile in screen.values() if tile == 2])
 
 
@@ -67,44 +52,29 @@ def part2(program):
     score = None
     last_ball_x = 0
     last_paddle_x = 0
-    computer = Computer(program)
-    computer.set_mem(0, 2)
-    computer.input_func = lambda: (last_ball_x > last_paddle_x) - (last_ball_x < last_paddle_x)
+
+    def paddle_ai():
+        return (last_ball_x > last_paddle_x) - (last_ball_x < last_paddle_x)
+
+    computer = Computer(program, mem_override={0: 2}, input=paddle_ai)
+
+    computer.input_func = paddle_ai
     while not computer.halted:
         try:
-            computer.run(pause=True)
-        except Pause:
+            x = computer.run()
+            y = computer.run()
+            pos = Coord(x, y)
+            if pos == Coord(-1, 0):
+                score = computer.run()
+            else:
+                screen[pos] = computer.run()
+                if screen[pos] == 3:
+                    last_paddle_x = pos.x
+                if screen[pos] == 4:
+                    last_ball_x = pos.x
+        except Halted:
             pass
-        else:
-            break
-        x = computer.output
-        try:
-            computer.run(pause=True)
-        except Pause:
-            pass
-        else:
-            break
-        y = computer.output
-        pos = Coord(x, y)
-        try:
-            computer.run(pause=True)
-        except Pause:
-
-            pass
-        else:
-            break
-        if pos == Coord(-1, 0):
-            score = computer.output
-            # print_screen(screen, score)
-            # input()
-        else:
-            screen[pos] = computer.output
-            if screen[pos] == 3:
-                last_paddle_x = pos.x
-            if screen[pos] == 4:
-                last_ball_x = pos.x
     return score
-
 
 
 if __name__ == "__main__":

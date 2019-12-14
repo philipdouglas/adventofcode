@@ -1,5 +1,4 @@
 from collections import Counter
-from math import radians
 
 from aocd.models import Puzzle
 
@@ -94,7 +93,7 @@ def part2(asteroids, target=200, station=Coord(11, 13)):
     asteroids = parse_asteroids(asteroids)
     destroyed = asteroids = [other - station for other in asteroids if other != station]
     destroyed = sorted(destroyed, key=lambda asteroid: (test_asteroid(asteroid, asteroids), (360 - asteroid.angle_to(Coord(0, -1))) % 360))
-    print([(c + station, 360-c.angle_to(Coord(0, -1)), ) for c in destroyed])
+    print([(c + station, 360 - c.angle_to(Coord(0, -1)), ) for c in destroyed])
     result = destroyed[target - 1] + station
     return result.x * 100 + result.y
 
