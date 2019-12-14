@@ -9,6 +9,10 @@ class Pause(Exception):
     pass
 
 
+class InputRequired(Exception):
+    pass
+
+
 @dataclasses.dataclass()
 class Computer:
     """
@@ -77,6 +81,10 @@ class Computer:
         dest.write(param1.read() * param2.read())
 
     def store(self, dest):
+        if self.input_func:
+            dest.write(self.input_func())
+            return
+
         if self.pause:
             dest.write(self._input.pop(0))
         else:
@@ -110,6 +118,7 @@ class Computer:
     _mem = None
     _relative_base = 0
     _input = [1]
+    input_func = None
     _output = None
     halted = False
 
@@ -143,6 +152,9 @@ class Computer:
         bits = str(opcode).rjust(5, '0')
         op = int(bits[-2:])
         return (op, tuple(int(mode) for mode in reversed(bits[0:3])))
+
+    def set_mem(self, address, value):
+        self._mem[address] = value
 
     def run(self, noun=None, verb=None, inp=None, pause=False):
         if self.halted:
