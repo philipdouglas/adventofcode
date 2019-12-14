@@ -80,12 +80,9 @@ def squash_moons(moons):
 
 
 def sim_1d(moons):
-    # history = set()
     start = squash_moons(moons)
     steps = 0
     while squash_moons(moons) != start or steps == 0:
-        # history.add(rep)
-        # print(f"{steps}: {rep}")
         for moon_a, moon_b in itertools.permutations(moons, 2):
             d = 0
             if moon_a.pos < moon_b.pos:
