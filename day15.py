@@ -75,7 +75,7 @@ def shortest_route(known, target):
         openset.sort(key=lambda c: fscore[c])
         current = openset.pop(0)
         if current not in known:
-            print(f"Unknown {current}, skipping...")
+            # print(f"Unknown {current}, skipping...")
             continue
         elif known[current] == 2:
             return reconstruct_path(camefrom, current)
@@ -126,11 +126,22 @@ def part1(program):
     return shortest_route(known, goal)
 
 
-# def part2(program):
-#     """
-#     >>> part2()
-#
-#     """
+def part2(program):
+    known = {}
+    start = find_goal(known, program)
+    vacuum = {pos for pos, value in known.items() if value == 1}
+    oxygenated = {start}
+    minutes = 0
+    while vacuum:
+        spread_to = set()
+        for pos in oxygenated:
+            for neighbour in pos.neighbours:
+                if neighbour in vacuum:
+                    spread_to.add(neighbour)
+        minutes += 1
+        vacuum -= spread_to
+        oxygenated |= spread_to
+    return minutes
 
 
 if __name__ == "__main__":
@@ -140,4 +151,4 @@ if __name__ == "__main__":
     puzzle = Puzzle(year=2019, day=15)
     program = [int(val) for val in puzzle.input_data.split(',')]
     puzzle.answer_a = inspect(part1(program), prefix='Part 1: ')
-    # puzzle.answer_b = inspect(part2(program), prefix='Part 2: ')
+    puzzle.answer_b = inspect(part2(program), prefix='Part 2: ')
