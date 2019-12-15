@@ -8,50 +8,48 @@ from coord import Coord
 from util import inspect
 
 
-def find_goal(known, program):
+def find_goal(program, debug=True):
     bot = Computer(program, input=[])
     pos = Coord(0, 0)
-    known[pos] = 1
+    known = {pos: 1}
     explored = defaultdict(int)
-    last_explored = {pos: 0}
+    last_visited = {pos: 0}
     steps = 0
 
     while True:
-        # draw(known, pos)
-        # command = input()
+        if debug:
+            draw(known, pos)
+            input()
         backtrack = []
-        for inst, target in [(1, pos.up()), (3, pos.left()), (2, pos.down()), (4, pos.right())]:
+        for inst, target in zip([1, 3, 2, 4], list(pos.neighbours)):
             if target in known:
                 if known[target] == 1:
                     backtrack.append((target, inst))
                 continue
             break
         else:
-            backtrack.sort(key=lambda pair: last_explored[pair[0]])
+            backtrack.sort(key=lambda pair: last_visited[pair[0]])
             backtrack.sort(key=lambda pair: explored[pair[0]])
             target, inst = backtrack[0]
 
         bot.add_input(inst)
         result = bot.run()
 
-        if target in known:
-            assert result == known[target]
-        else:
+        if target not in known:
             known[target] = result
-            for adjacent in [target.up(), target.down(), target.left(), target.right()]:
+            for adjacent in target.neighbours:
                 explored[adjacent] += 1
 
-        steps += 1
-
-        if result == 2:
-            pos = target
-            break
-        elif result == 0:
+        if result == 0:
             continue
+
+        steps += 1
+        pos = target
+        if result == 2:
+            break
         elif result == 1:
-            pos = target
-            last_explored[pos] = steps
-    return target
+            last_visited[pos] = steps
+    return target, known
 
 
 def reconstruct_path(cameform, pos):
@@ -64,32 +62,24 @@ def reconstruct_path(cameform, pos):
 
 def shortest_route(known, target):
     start = Coord(0, 0)
-    openset = [start]
+    openset = {start}
     camefrom = {}
     gscore = defaultdict(lambda: float('inf'))
     gscore[start] = 0
-    fscore = defaultdict(lambda: float('inf'))
-    fscore[start] = start.manhatten_dist()
 
     while openset:
-        openset.sort(key=lambda c: fscore[c])
-        current = openset.pop(0)
-        if current not in known:
-            # print(f"Unknown {current}, skipping...")
+        current = openset.pop()
+        if current not in known or known[current] == 0:
             continue
         elif known[current] == 2:
             return reconstruct_path(camefrom, current)
-        elif known[current] == 0:
-            continue
 
         for neighbour in current.neighbours:
             new_gscore = gscore[current] + 1
             if new_gscore < gscore[neighbour]:
                 camefrom[neighbour] = current
                 gscore[neighbour] = new_gscore
-                fscore[neighbour] = new_gscore + neighbour.manhatten_dist()
-                if neighbour not in openset:
-                    openset.append(neighbour)
+                openset.add(neighbour)
 
 
 TILES = {
@@ -120,27 +110,20 @@ def draw(known, bot_pos):
     print('\n'.join(rows))
 
 
-def part1(program):
-    known = {}
-    goal = find_goal(known, program)
+def part1(goal, known):
     return shortest_route(known, goal)
 
 
-def part2(program):
-    known = {}
-    start = find_goal(known, program)
+def part2(goal, known):
     vacuum = {pos for pos, value in known.items() if value == 1}
-    oxygenated = {start}
+    oxygenated = {goal}
     minutes = 0
     while vacuum:
-        spread_to = set()
-        for pos in oxygenated:
-            for neighbour in pos.neighbours:
-                if neighbour in vacuum:
-                    spread_to.add(neighbour)
-        minutes += 1
+        spread_to = {neighbour for oxy in oxygenated for neighbour in oxy.neighbours}
+        spread_to &= vacuum
         vacuum -= spread_to
         oxygenated |= spread_to
+        minutes += 1
     return minutes
 
 
@@ -150,5 +133,6 @@ if __name__ == "__main__":
 
     puzzle = Puzzle(year=2019, day=15)
     program = [int(val) for val in puzzle.input_data.split(',')]
-    puzzle.answer_a = inspect(part1(program), prefix='Part 1: ')
-    puzzle.answer_b = inspect(part2(program), prefix='Part 2: ')
+    goal, known = find_goal(program, debug=False)
+    puzzle.answer_a = inspect(part1(goal, known), prefix='Part 1: ')
+    puzzle.answer_b = inspect(part2(goal, known), prefix='Part 2: ')
