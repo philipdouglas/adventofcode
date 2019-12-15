@@ -94,6 +94,11 @@ class Coord:
     def right(self):
         return self.__class__(self.x + 1, self.y)
 
+    @property
+    def neighbours(self):
+        for neighbour in [self.up(), self.left(), self.down(), self.right()]:
+            yield neighbour
+
     def manhatten_dist(self, start=None):
         """
         >>> c = Coord(2, 3)
@@ -143,7 +148,6 @@ class Coord:
         if result < 0:
             result = 360 + result
         return result
-
 
 
 @dataclass(order=False, repr=False, frozen=True)
