@@ -2,5 +2,8 @@
     "python.linting.enabled": true,
     "python.linting.flake8Enabled": true,
     "python.pythonPath": "env\\Scripts\\python.exe",
-    "editor.rulers": [100]
+    "editor.rulers": [100],
+    "python.linting.flake8Args": [
+        "--ignore=E501",
+    ],
 }

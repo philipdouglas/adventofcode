@@ -156,7 +156,7 @@ class Computer:
         self._input = input
 
     @staticmethod
-    @lru_cache
+    @lru_cache(maxsize=32)
     def parse_op(opcode):
         """
         >>> Computer.parse_op(1002)
@@ -168,6 +168,11 @@ class Computer:
         op = int(bits[-2:])
         return (op, tuple(int(mode) for mode in reversed(bits[0:3])))
 
+    def get_params(self, param_num, modes):
+        params = list(self._mem.values())[self._pc + 1:self._pc + param_num]
+        params = zip(params, modes)
+        return [Param(self, value, mode) for value, mode in params]
+
     def run(self):
         if self.halted:
             raise Halted()
@@ -178,8 +183,7 @@ class Computer:
                 op, param_num = self._opcodes[op]
             except KeyError:
                 raise Exception(f"Unknown opcode {opcode} at pc {self._pc}")
-            params = zip(list(self._mem.values())[self._pc + 1:self._pc + param_num], modes)
-            params = [Param(self, value, mode) for value, mode in params]
+            params = self.get_params(param_num, modes)
             pc_before = self._pc
             try:
                 op(self, *params)
