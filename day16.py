@@ -1,9 +1,9 @@
-from itertools import chain, cycle, repeat
+from itertools import accumulate, chain, cycle
+from operator import add
 
 from aocd.models import Puzzle
 
 from util import inspect
-
 
 BASE_PATTERN = [0, 1, 0, -1]
 
@@ -14,7 +14,7 @@ def compute_digit(digits, multiplier):
     # skip the very first value exactly once
     next(pattern)
     result = sum(a * b for a, b in zip(digits, pattern))
-    return int(str(result)[-1])
+    return abs(result) % 10
 
 
 def part1(number, phases=100):
@@ -34,13 +34,9 @@ def part1(number, phases=100):
     >>> part1('69317163492948606335995924319873')
     '52432133'
     """
-    digits = tuple(int(digit) for digit in number)
-    while phases > 0:
-        phases -= 1
-        next_digits = []
-        for index in range(len(digits)):
-            next_digits.append(compute_digit(digits, index + 1))
-        digits = tuple(next_digits)
+    digits = [int(digit) for digit in number]
+    for _ in range(phases):
+        digits = [compute_digit(digits, index + 1) for index in range(len(digits))]
     return ''.join(map(str, digits[:8]))
 
 
@@ -54,25 +50,19 @@ def part2(number, phases=100):
     '53553731'
     """
     offset = int(number[:7])
-    digits = tuple(int(digit) for digit in number)
-    digits = tuple(chain.from_iterable(repeat(digits, 10000)))
-    digits = digits[offset:]
-    while phases > 0:
-        phases -= 1
-        new_digits = []
-        prev = 0
-        for digit in reversed(digits):
-            prev += digit
-            new_digits.append(prev % 10)
-        digits = tuple(reversed(new_digits))
-    return ''.join(map(str, digits[:8]))
+    digits = [int(digit) for digit in number] * 10000
+    digits = reversed(digits[offset:])
+    for _ in range(phases):
+        digits = [value % 10 for value in accumulate(digits, func=add)]
+    return ''.join(map(str, reversed(digits[-8:])))
 
 
 if __name__ == "__main__":
     import doctest
     doctest.testmod()
+    print("Tests complete!")
 
     puzzle = Puzzle(year=2019, day=16)
     number = puzzle.input_data
-    # puzzle.answer_a = inspect(fft(number), prefix='Part 1: ')
+    puzzle.answer_a = inspect(part1(number), prefix='Part 1: ')
     puzzle.answer_b = inspect(part2(number), prefix='Part 2: ')
