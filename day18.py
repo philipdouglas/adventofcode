@@ -39,6 +39,8 @@ def path_to_target(pos, target, space, doors):
 
 def part1(lines):
     """
+    Based on https://www.reddit.com/r/adventofcode/comments/ec8090/2019_day_18_solutions/fbd8y0b
+
     >>> part1(["#########","#b.A.@.a#","#########"])
     8
     >>> part1(["########################","#f.D.E.e.C.b.A.@.a.B.c.#","######################.#","#d.....................#","########################"])
@@ -53,7 +55,7 @@ def part1(lines):
     open_space = set()
     all_space = set()
     start = None
-    keys = {}
+    all_keys = {}
     doors = {}
     for y, row in enumerate(lines):
         for x, cell in enumerate(row):
@@ -65,11 +67,11 @@ def part1(lines):
             if cell == '@':
                 start = current
             elif cell in ascii_lowercase:
-                keys[cell] = current
+                all_keys[cell] = current
             elif cell in ascii_uppercase:
                 doors[cell] = current
 
-    all_points = list(keys.values()) + [start]
+    all_points = list(all_keys.values()) + [start]
     routes = {}
     for point_a, point_b in combinations(all_points, 2):
         distance, keys_needed = path_to_target(point_a, point_b, all_space, doors)
@@ -78,28 +80,32 @@ def part1(lines):
         if point_b != start:
             routes.setdefault(point_a, []).append((point_b, distance, set(keys_needed)))
 
-    partial = [(0, start, set())]
-    visited = []
-    shortest = float('inf')
-    key_locs = {locs: key for key, locs in keys.items()}
-    while partial:
-        steps, pos, keys_collected = partial.pop()
-        if (pos, keys_collected, steps) in visited:
-            continue
-        else:
-            visited.append((pos, keys_collected, steps))
-        if steps >= shortest:
-            continue
-        if len(keys_collected) == len(keys):
-            shortest = steps
-            continue
+    key_locs = {loc: key for key, loc in all_keys.items()}
 
-        for dest, dist, keys_needed in routes[pos]:
-            next_key = key_locs[dest]
-            if next_key not in keys_collected and keys_needed <= keys_collected:
-                partial.append((steps + dist, dest, keys_collected | {next_key}))
+    cache = {}
 
-    return shortest
+    def reachable(current, keys):
+        for dest, dist, required in routes[current]:
+            if required.isdisjoint(keys) and key_locs[dest] in keys:
+                yield key_locs[dest], dist
+
+    def distance_to_collect(current, keys):
+        if not keys:
+            return 0
+
+        cache_key = f"{current} {repr(keys)}"
+        if cache_key in cache:
+            return cache[cache_key]
+
+        result = float('inf')
+        for key, dist in reachable(current, keys):
+            new_dist = dist + distance_to_collect(all_keys[key], keys - {key})
+            result = min(result, new_dist)
+
+        cache[cache_key] = result
+        return result
+
+    return distance_to_collect(start, set(all_keys.keys()))
 
 
 # def part2(lines):
@@ -115,5 +121,5 @@ if __name__ == "__main__":
 
     puzzle = Puzzle(year=2019, day=18)
     lines = puzzle.input_data.split('\n')
-    # puzzle.answer_a = inspect(part1(lines), prefix='Part 1: ')
+    puzzle.answer_a = inspect(part1(lines), prefix='Part 1: ')
     # puzzle.answer_b = inspect(part2(lines), prefix='Part 2: ')
