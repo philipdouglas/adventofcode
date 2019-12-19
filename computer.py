@@ -210,7 +210,10 @@ class Computer:
         return self._mem[0]
 
     def add_input(self, value):
-        self._input.append(value)
+        try:
+            self._input += value
+        except ValueError:
+            self._input.append(value)
 
 
 @dataclasses.dataclass()
